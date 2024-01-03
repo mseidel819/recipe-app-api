@@ -14,6 +14,7 @@ from core.models import (
     Tag
 )
 
+
 from recipe.serializers import (
     RecipeSerializer,
     RecipeDetailSerializer
@@ -21,6 +22,7 @@ from recipe.serializers import (
 
 
 RECIPES_URL = reverse("recipe:recipe-list")
+
 
 def detail_url(recipe_id):
     """
@@ -71,7 +73,7 @@ class PrivateRecipeApiTests(TestCase):
     Test authenticated recipe api access
     """
     def setUp(self):
-        self.user =create_user(
+        self.user = create_user(
             email="test@example.com",
             password="test123"
         )

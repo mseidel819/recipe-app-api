@@ -12,6 +12,7 @@ from core.models import (
 )
 from recipe import serializers
 
+
 class RecipeViewSet(viewsets.ModelViewSet):
     """
     Manage recipes in the database
@@ -46,7 +47,8 @@ class TagViewSet(
     mixins.DestroyModelMixin,
     mixins.UpdateModelMixin,
     mixins.ListModelMixin,
-    viewsets.GenericViewSet):
+    viewsets.GenericViewSet
+):
     """
     Manage tags in the database
     """
