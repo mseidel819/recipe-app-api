@@ -63,11 +63,11 @@ class BaseRecipeAttrViewSet(
         return self.queryset.filter(user=self.request.user).order_by("-name")
 
     # do i need this?
-    # def perform_create(self, serializer):
-    #     """
-    #     Create a new object
-    #     """
-    #     serializer.save(user=self.request.user)
+    def perform_create(self, serializer):
+        """
+        Create a new object
+        """
+        serializer.save(user=self.request.user)
 
 
 class TagViewSet(
