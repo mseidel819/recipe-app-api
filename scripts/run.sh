@@ -2,7 +2,7 @@
 
 set -e
 
-python managy.py wit_for_db
+python manage.py wait_for_db
 python manage.py collectstatic --noinput
 python manage.py migrate
 
