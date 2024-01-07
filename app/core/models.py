@@ -108,3 +108,86 @@ class Ingredient(models.Model):
 
     def __str__(self):
         return self.name
+
+
+# blog recipe models. condiser merging with recipe models
+class BlogRecipe(models.Model):
+    """
+    Recipe object
+    """
+
+    title = models.CharField(max_length=255)
+    author = models.ForeignKey(
+        'BlogAuthor',
+        on_delete=models.CASCADE
+    )
+    category = models.CharField(max_length=255)
+    slug = models.CharField(max_length=255)
+    rating = models.IntegerField()
+    num_reviews = models.IntegerField()
+    description = models.TextField(blank=True)
+    prep_time = models.IntegerField()
+    cook_time = models.IntegerField()
+    total_time = models.IntegerField()
+    servings = models.IntegerField()
+    link = models.CharField(max_length=255, blank=True)
+    ingredients = models.ManyToManyField('BlogIngredient')
+    instructions = models.ManyToManyField('BlogInstruction')
+    # image = models.ImageField(null=True, upload_to=recipe_image_file_path)
+    notes = models.ManyToManyField('BlogNote')
+
+    def __str__(self):
+        return self.title
+
+
+class BlogAuthor(models.Model):
+    """
+    Author object
+    """
+    name = models.CharField(max_length=255)
+    website_link = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.name
+
+
+class BlogIngredient(models.Model):
+    """
+    Ingredient object
+    """
+    author = models.ForeignKey(
+        'BlogAuthor',
+        on_delete=models.CASCADE
+    )
+    ingredient = models.TextField()
+
+    def __str__(self):
+        return self.ingredient.slice(0, 20)
+
+
+class BlogInstruction(models.Model):
+    """
+    Instruction object
+    """
+    author = models.ForeignKey(
+        'BlogAuthor',
+        on_delete=models.CASCADE
+    )
+    instruction = models.TextField()
+
+    def __str__(self):
+        return self.instruction.slice(0, 20)
+
+
+class BlogNote(models.Model):
+    """
+    Notes object
+    """
+    author = models.ForeignKey(
+        'BlogAuthor',
+        on_delete=models.CASCADE
+    )
+    note = models.TextField()
+
+    def __str__(self):
+        return self.note.slice(0, 20)
