@@ -36,6 +36,7 @@ class BlogInstructionSerializer(serializers.ModelSerializer):
         fields = ('id', 'instruction')
         read_only_fields = ('id',)
 
+
 class BlogAuthorSerializer(serializers.ModelSerializer):
     """Serializer for author object"""
     class Meta:
