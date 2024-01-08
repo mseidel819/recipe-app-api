@@ -9,11 +9,11 @@ from core.models import (
     BlogIngredient,
     BlogNote,
     BlogInstruction,
-    # BlogAuthor,
+    BlogAuthor,
 )
 
 
-class IngredientSerializer(serializers.ModelSerializer):
+class BlogIngredientSerializer(serializers.ModelSerializer):
     """Serializer for ingredient object"""
     class Meta:
         model = BlogIngredient
@@ -21,7 +21,7 @@ class IngredientSerializer(serializers.ModelSerializer):
         read_only_fields = ('id',)
 
 
-class NoteSerializer(serializers.ModelSerializer):
+class BlogNoteSerializer(serializers.ModelSerializer):
     """Serializer for note object"""
     class Meta:
         model = BlogNote
@@ -29,26 +29,26 @@ class NoteSerializer(serializers.ModelSerializer):
         read_only_fields = ('id',)
 
 
-class InstructionSerializer(serializers.ModelSerializer):
+class BlogInstructionSerializer(serializers.ModelSerializer):
     """Serializer for instruction object"""
     class Meta:
         model = BlogInstruction
         fields = ('id', 'instruction')
         read_only_fields = ('id',)
 
-# class AuthorSerializer(serializers.ModelSerializer):
-#     """Serializer for author object"""
-#     class Meta:
-#         model = BlogAuthor
-#         fields = ('id', 'name', 'website_link')
-#         read_only_fields = ('id',)
+class BlogAuthorSerializer(serializers.ModelSerializer):
+    """Serializer for author object"""
+    class Meta:
+        model = BlogAuthor
+        fields = ('id', 'name', 'website_link')
+        read_only_fields = ('id',)
 
 
-class RecipeSerializer(serializers.ModelSerializer):
+class BlogRecipeSerializer(serializers.ModelSerializer):
     """Serializer for recipes"""
-    ingredients = IngredientSerializer(many=True, required=False)
-    notes = NoteSerializer(many=True, required=False)
-    instructions = InstructionSerializer(many=True, required=False)
+    # ingredients = IngredientSerializer(many=True, required=False)
+    # notes = NoteSerializer(many=True, required=False)
+    # instructions = InstructionSerializer(many=True, required=False)
     # author = AuthorSerializer(many=True, required=True)
 
     class Meta:
@@ -144,12 +144,16 @@ class RecipeSerializer(serializers.ModelSerializer):
         return instance
 
 
-class RecipeDetailSerializer(RecipeSerializer):
+class BlogRecipeDetailSerializer(BlogRecipeSerializer):
     """
     Serializer for recipe detail object
     """
-    class Meta(RecipeSerializer.Meta):
-        fields = RecipeSerializer.Meta.fields + (
+    ingredients = BlogIngredientSerializer(many=True, required=False)
+    notes = BlogNoteSerializer(many=True, required=False)
+    instructions = BlogInstructionSerializer(many=True, required=False)
+
+    class Meta(BlogRecipeSerializer.Meta):
+        fields = BlogRecipeSerializer.Meta.fields + (
             "description", "num_reviews", "prep_time", "cook_time",
             "total_time", "servings", "ingredients", "instructions", "notes"
         )

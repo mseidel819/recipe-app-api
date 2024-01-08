@@ -111,6 +111,17 @@ class Ingredient(models.Model):
 
 
 # blog recipe models. condiser merging with recipe models
+class BlogAuthor(models.Model):
+    """
+    Author object
+    """
+    name = models.CharField(max_length=255)
+    website_link = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.name
+
+
 class BlogRecipe(models.Model):
     """
     Recipe object
@@ -118,7 +129,7 @@ class BlogRecipe(models.Model):
 
     title = models.CharField(max_length=255)
     author = models.ForeignKey(
-        'BlogAuthor',
+        BlogAuthor,
         on_delete=models.CASCADE
     )
     category = models.CharField(max_length=255)
@@ -137,26 +148,15 @@ class BlogRecipe(models.Model):
     notes = models.ManyToManyField('BlogNote')
 
     def __str__(self):
-        return self.title
-
-
-class BlogAuthor(models.Model):
-    """
-    Author object
-    """
-    name = models.CharField(max_length=255)
-    website_link = models.CharField(max_length=255)
-
-    def __str__(self):
-        return self.name
+        return f"{self.title} by {self.author}"
 
 
 class BlogIngredient(models.Model):
     """
     Ingredient object
     """
-    author = models.ForeignKey(
-        'BlogAuthor',
+    recipe = models.ForeignKey(
+        BlogRecipe,
         on_delete=models.CASCADE
     )
     ingredient = models.TextField()
@@ -169,8 +169,8 @@ class BlogInstruction(models.Model):
     """
     Instruction object
     """
-    author = models.ForeignKey(
-        'BlogAuthor',
+    recipe = models.ForeignKey(
+        BlogRecipe,
         on_delete=models.CASCADE
     )
     instruction = models.TextField()
@@ -183,8 +183,8 @@ class BlogNote(models.Model):
     """
     Notes object
     """
-    author = models.ForeignKey(
-        'BlogAuthor',
+    recipe = models.ForeignKey(
+        BlogRecipe,
         on_delete=models.CASCADE
     )
     note = models.TextField()
