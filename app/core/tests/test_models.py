@@ -131,10 +131,15 @@ class ModelTests(TestCase):
             cook_time="20 minutes",
             total_time="1 hour",
             servings="9 servings",
-            description="I was never a fan of cornbread until this recipe! After lots of recipe testing, I found the perfect ratio of ingredients for soft, moist, and buttery cornbread with crisp-crunchy edges. I guarantee this is the best cornbread recipe you\u2019ll try!"
+            description="I was never a fan of cornbread until this recipe!"
         )
-        self.assertEqual(str(recipe), 'My Favorite Cornbread Recipe by sally\'s baking addiction')
-        self.assertEqual(str(author), 'sally\'s baking addiction')
+        self.assertEqual(
+                    str(recipe),
+                    'My Favorite Cornbread Recipe by sally\'s baking addiction'
+                         )
+        self.assertEqual(str(author),
+                         'sally\'s baking addiction'
+                         )
 
     def test_create_blog_ingredient(self):
         """
@@ -155,14 +160,16 @@ class ModelTests(TestCase):
             cook_time="20 minutes",
             total_time="1 hour",
             servings="9 servings",
-            description="I was never a fan of cornbread until this recipe! After lots of recipe testing, I found the perfect ratio of ingredients for soft, moist, and buttery cornbread with crisp-crunchy edges. I guarantee this is the best cornbread recipe you\u2019ll try!"
+            description="I was never a fan of cornbread until this recipe!"
         )
 
         ingredient = models.BlogIngredient.objects.create(
             ingredient="1 cup (240ml) whole milk, at room temperature",
             recipe=recipe
         )
-        self.assertEqual(str(ingredient), '1 cup (240ml) whole milk, at room temperature')
+        self.assertEqual(
+            str(ingredient), '1 cup (240ml) whole milk, at room temperature'
+            )
 
     def test_create_blog_instruction(self):
         """
@@ -183,14 +190,16 @@ class ModelTests(TestCase):
             cook_time="20 minutes",
             total_time="1 hour",
             servings="9 servings",
-            description="I was never a fan of cornbread until this recipe! After lots of recipe testing, I found the perfect ratio of ingredients for soft, moist, and buttery cornbread with crisp-crunchy edges. I guarantee this is the best cornbread recipe you\u2019ll try!"
+            description="I was never a fan of cornbread until this recipe!"
         )
 
         instruction = models.BlogInstruction.objects.create(
-            instruction="Preheat oven to 400\u00b0F (204\u00b0C). Spray a 9-inch or 10-inch cast iron skillet with nonstick spray or grease heavily with butter. Set aside.",
+            instruction="Preheat oven to 400\u00b0F (204\u00b0C).",
             recipe=recipe
         )
-        self.assertEqual(str(instruction), 'Preheat oven to 400\u00b0F (204\u00b0C). Spray a 9-inch or 10-inch cast iron skillet with nonstick spray or grease heavily with butter. Set aside.')
+        self.assertEqual(
+            str(instruction), 'Preheat oven to 400\u00b0F (204\u00b0C).'
+            )
 
     def test_create_blog_note(self):
         """
@@ -211,11 +220,12 @@ class ModelTests(TestCase):
             cook_time="20 minutes",
             total_time="1 hour",
             servings="9 servings",
-            description="I was never a fan of cornbread until this recipe! After lots of recipe testing, I found the perfect ratio of ingredients for soft, moist, and buttery cornbread with crisp-crunchy edges. I guarantee this is the best cornbread recipe you\u2019ll try!"
+            description="I was never a fan of cornbread until this recipe!"
         )
 
         note = models.BlogNote.objects.create(
-            note="Make Ahead & Freezing Instructions: Prepare cornbread through step 5. Cover tightly and store in the refrigerator for up to 2 days or freeze for up to 3 months. Thaw in the refrigerator overnight. Bring to room temperature, then continue with step 6. Baked cornbread freezes well for up to 3 months. Thaw in the refrigerator or on the counter, then warm up before enjoying.",
+            note="Make Ahead & Freezing Instructions...",
             recipe=recipe
         )
-        self.assertEqual(str(note), 'Make Ahead & Freezing Instructions: Prepare cornbread through step 5. Cover tightly and store in the refrigerator for up to 2 days or freeze for up to 3 months. Thaw in the refrigerator overnight. Bring to room temperature, then continue with step 6. Baked cornbread freezes well for up to 3 months. Thaw in the refrigerator or on the counter, then warm up before enjoying.')
+        self.assertEqual(str(note), 'Make Ahead & Freezing Instructions...'
+                         )
