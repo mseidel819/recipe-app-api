@@ -5,6 +5,8 @@ import uuid
 import os
 from django.conf import settings
 from django.db import models
+from django.utils.text import slugify
+
 
 from django.contrib.auth.models import (
     AbstractBaseUser,
@@ -133,7 +135,7 @@ class BlogRecipe(models.Model):
         on_delete=models.CASCADE
     )
     category = models.CharField(max_length=255)
-    slug = models.SlugField(max_length=255)
+    slug = models.SlugField(unique=True, blank=True)
     rating = models.IntegerField()
     num_reviews = models.IntegerField()
     description = models.TextField(blank=True)
@@ -146,6 +148,12 @@ class BlogRecipe(models.Model):
     instructions = models.ManyToManyField('BlogInstruction')
     # image = models.ImageField(null=True, upload_to=recipe_image_file_path)
     notes = models.ManyToManyField('BlogNote')
+
+    def save(self, *args, **kwargs):
+        """saves the slug and adds one, if not provided"""
+        if not self.slug:
+            self.slug = slugify(self.title)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.title} by {self.author}"
