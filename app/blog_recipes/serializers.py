@@ -84,14 +84,6 @@ class BlogRecipeSerializer(serializers.ModelSerializer):
             )
             recipe.instructions.add(instruction_obj)
 
-    # def _get_or_create_authors(self, authors_to_add, recipe):
-    #     """handle getting or creating authors"""
-    #     for author in authors_to_add:
-    #         author_obj, create = BlogAuthor.objects.get_or_create(
-    #             **author
-    #         )
-    #         recipe.authors.add(author_obj)
-
     def _get_or_create_ingredients(self, ingredients_to_add, recipe):
         """handle getting or creating ingredients"""
         author = self.context["request"].author

@@ -133,14 +133,14 @@ class BlogRecipe(models.Model):
         on_delete=models.CASCADE
     )
     category = models.CharField(max_length=255)
-    slug = models.CharField(max_length=255)
+    slug = models.SlugField(max_length=255)
     rating = models.IntegerField()
     num_reviews = models.IntegerField()
     description = models.TextField(blank=True)
-    prep_time = models.IntegerField()
-    cook_time = models.IntegerField()
-    total_time = models.IntegerField()
-    servings = models.IntegerField()
+    prep_time = models.CharField(max_length=255)
+    cook_time = models.CharField(max_length=255)
+    total_time = models.CharField(max_length=255)
+    servings = models.CharField(max_length=255)
     link = models.CharField(max_length=255, blank=True)
     ingredients = models.ManyToManyField('BlogIngredient')
     instructions = models.ManyToManyField('BlogInstruction')
@@ -162,7 +162,7 @@ class BlogIngredient(models.Model):
     ingredient = models.TextField()
 
     def __str__(self):
-        return self.ingredient.slice(0, 20)
+        return self.ingredient
 
 
 class BlogInstruction(models.Model):
@@ -176,7 +176,7 @@ class BlogInstruction(models.Model):
     instruction = models.TextField()
 
     def __str__(self):
-        return self.instruction.slice(0, 20)
+        return self.instruction
 
 
 class BlogNote(models.Model):
@@ -190,4 +190,4 @@ class BlogNote(models.Model):
     note = models.TextField()
 
     def __str__(self):
-        return self.note.slice(0, 20)
+        return self.note
