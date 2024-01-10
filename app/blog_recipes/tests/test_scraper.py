@@ -74,23 +74,26 @@ class ScrapeTests(TestCase):
             self.assertTrue(note.note)
             self.assertTrue(note.recipe)
 
-    def test_update_existing_recipes_in_DB(self):
+    def test_update_existing_recipes_in_db(self):
         """
         Test that recipes are updated in the database
         """
 
         href_list = get_urls(URL, HEADERS)
         add_recipe_to_db(href_list[:2], "bread", HEADERS)
+        recipes1 = BlogRecipe.objects.all()
+        ingredients1 = BlogIngredient.objects.all()
+        instructions1 = BlogInstruction.objects.all()
+        notes1 = BlogNote.objects.all()
         add_recipe_to_db(href_list[:2], "bread", HEADERS)
         self.assertTrue(href_list)
 
-        recipes = BlogRecipe.objects.all()
-        ingredients = BlogIngredient.objects.all()
-        instructions = BlogInstruction.objects.all()
-        notes = BlogNote.objects.all()
+        recipes2 = BlogRecipe.objects.all()
+        ingredients2 = BlogIngredient.objects.all()
+        instructions2 = BlogInstruction.objects.all()
+        notes2 = BlogNote.objects.all()
 
-        self.assertEqual(len(recipes), 2)
-        for recipe in recipes:
+        for recipe in recipes1:
             self.assertTrue(recipe.title)
             self.assertTrue(recipe.author)
             self.assertTrue(recipe.category)
@@ -100,14 +103,19 @@ class ScrapeTests(TestCase):
             self.assertGreaterEqual(recipe.num_reviews, 0)
             self.assertEqual(recipe.author.name, "sally\'s baking addiction")
 
-        for ingredient in ingredients:
+        for ingredient in ingredients1:
             self.assertTrue(ingredient.ingredient)
             self.assertTrue(ingredient.recipe)
 
-        for instruction in instructions:
+        for instruction in instructions1:
             self.assertTrue(instruction.instruction)
             self.assertTrue(instruction.recipe)
 
-        for note in notes:
+        for note in notes1:
             self.assertTrue(note.note)
             self.assertTrue(note.recipe)
+
+        self.assertEqual(len(recipes1), len(recipes2))
+        self.assertEqual(len(ingredients1), len(ingredients2))
+        self.assertEqual(len(instructions1), len(instructions2))
+        self.assertEqual(len(notes1), len(notes2))
