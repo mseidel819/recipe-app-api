@@ -24,12 +24,18 @@ from blog_recipes import serializers
     ),
 
 )
-class BlogRecipeViewSet(viewsets.ModelViewSet):
+class BlogRecipeViewSet(
+    # viewsets.ModelViewSet
+        mixins.ListModelMixin,
+        viewsets.GenericViewSet,
+        mixins.RetrieveModelMixin,
+     ):
     """
     Manage recipes in the database
     """
     serializer_class = serializers.BlogRecipeDetailSerializer
     queryset = BlogRecipe.objects.all()
+    lookup_field = "slug"
     # authentication_classes = (TokenAuthentication,)
     # permission_classes = (IsAuthenticated,)
 

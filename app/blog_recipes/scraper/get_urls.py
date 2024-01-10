@@ -32,4 +32,3 @@ def get_urls(url, headers):
 
     print(f'Url list completed ({len(href_list)} items)')
     return href_list
-
