@@ -31,16 +31,16 @@ def add_recipe_to_db(href_list, category, headers):
         soup = bs(res.text, 'html.parser')
         # main recipe class ".tasty-recipes"
 
-        if len(soup.select('.tasty-recipes')) == 0:
+        if soup.select('.tasty-recipes') is None:
             continue
 
         parsed_url = urlparse(url)
 
-        author = models.BlogAuthor.objects.create(
+        author, create = models.BlogAuthor.objects.update_or_create(
             name="sally\'s baking addiction",
             website_link="https://sallysbakingaddiction.com/"
         )
-        recipe = models.BlogRecipe.objects.create(
+        recipe, create = models.BlogRecipe.objects.update_or_create(
             title=get_text('.tasty-recipes-title', soup),
             author=author,
             category=category,
@@ -63,7 +63,7 @@ def add_recipe_to_db(href_list, category, headers):
             ".tasty-recipes-ingredients-body", "ul", soup
             )
         for ingredient in ingredients:
-            models.BlogIngredient.objects.create(
+            models.BlogIngredient.objects.update_or_create(
                 recipe=recipe,
                 ingredient=ingredient
             )
@@ -71,13 +71,13 @@ def add_recipe_to_db(href_list, category, headers):
             ".tasty-recipes-instructions-body", "ol", soup
             )
         for instruction in instructions:
-            models.BlogInstruction.objects.create(
+            models.BlogInstruction.objects.update_or_create(
                 recipe=recipe,
                 instruction=instruction
             )
         notes = get_scraped_arrays(".tasty-recipes-notes-body", "ol", soup)
         for note in notes:
-            models.BlogNote.objects.create(
+            models.BlogNote.objects.update_or_create(
                 recipe=recipe,
                 note=note
             )

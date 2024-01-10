@@ -7,7 +7,10 @@ from blog_recipes.scraper.get_urls import get_urls
 from blog_recipes.scraper.add_to_db import add_recipe_to_db
 
 from core.models import (
-    BlogRecipe
+    BlogRecipe,
+    BlogIngredient,
+    BlogInstruction,
+    BlogNote
 )
 
 
@@ -45,6 +48,9 @@ class ScrapeTests(TestCase):
         self.assertTrue(href_list)
 
         recipes = BlogRecipe.objects.all()
+        ingredients = BlogIngredient.objects.all()
+        instructions = BlogInstruction.objects.all()
+        notes = BlogNote.objects.all()
 
         for recipe in recipes:
             self.assertTrue(recipe.title)
@@ -55,3 +61,53 @@ class ScrapeTests(TestCase):
             self.assertGreaterEqual(recipe.rating, 0)
             self.assertGreaterEqual(recipe.num_reviews, 0)
             self.assertEqual(recipe.author.name, "sally\'s baking addiction")
+
+        for ingredient in ingredients:
+            self.assertTrue(ingredient.ingredient)
+            self.assertTrue(ingredient.recipe)
+
+        for instruction in instructions:
+            self.assertTrue(instruction.instruction)
+            self.assertTrue(instruction.recipe)
+
+        for note in notes:
+            self.assertTrue(note.note)
+            self.assertTrue(note.recipe)
+
+    def test_update_existing_recipes_in_DB(self):
+        """
+        Test that recipes are updated in the database
+        """
+
+        href_list = get_urls(URL, HEADERS)
+        add_recipe_to_db(href_list[:2], "bread", HEADERS)
+        add_recipe_to_db(href_list[:2], "bread", HEADERS)
+        self.assertTrue(href_list)
+
+        recipes = BlogRecipe.objects.all()
+        ingredients = BlogIngredient.objects.all()
+        instructions = BlogInstruction.objects.all()
+        notes = BlogNote.objects.all()
+
+        self.assertEqual(len(recipes), 2)
+        for recipe in recipes:
+            self.assertTrue(recipe.title)
+            self.assertTrue(recipe.author)
+            self.assertTrue(recipe.category)
+            self.assertTrue(recipe.slug)
+            self.assertTrue(recipe.link)
+            self.assertGreaterEqual(recipe.rating, 0)
+            self.assertGreaterEqual(recipe.num_reviews, 0)
+            self.assertEqual(recipe.author.name, "sally\'s baking addiction")
+
+        for ingredient in ingredients:
+            self.assertTrue(ingredient.ingredient)
+            self.assertTrue(ingredient.recipe)
+
+        for instruction in instructions:
+            self.assertTrue(instruction.instruction)
+            self.assertTrue(instruction.recipe)
+
+        for note in notes:
+            self.assertTrue(note.note)
+            self.assertTrue(note.recipe)
