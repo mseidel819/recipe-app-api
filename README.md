@@ -21,10 +21,10 @@ There are two setions of this project. both require user authentication:
 
 ## scraping recipes
 
-In order to refresh the recipe DB, run the following command:
+In order to refresh the recipe DB within the docker env, run the following command:
 
 ```
-python manage.py scrape
+docker-compose run --rm app sh -c "python manage.py scrape"
 ```
 
 TODO: add parameters to scrape.py to control how much is scraped
