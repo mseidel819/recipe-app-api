@@ -1,6 +1,6 @@
 # recipe-app-api
 
-There are two setions of this project. both require user authentication:
+There are two setions of this project. both (will eventually) require user authentication:
 
 ## app/recipe
 
