@@ -125,7 +125,7 @@ def add_recipe_to_db(href_list, category, headers):
             # Update or create the BlogImage instance with the uploaded image
             models.BlogImage.objects.update_or_create(
                 recipe=recipe,
-                image=uploaded_image
+                image_url=uploaded_image
             )
 
     print(f"Data collected!({len(href_list)} recipes added to db)")
