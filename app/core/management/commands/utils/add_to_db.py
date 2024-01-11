@@ -26,6 +26,10 @@ def add_recipe_to_db(href_list, category, headers):
 
     # scraping through each url
     print("Beginning data collection...")
+
+    # models.BlogRecipe.objects.filter(id__isnull=False).delete()
+    # models.BlogRecipe.objects.filter(slug__isnull=False).delete()
+
     for url in href_list:
         res = requests.get(url, headers=headers)
         soup = bs(res.text, 'html.parser')
@@ -40,6 +44,7 @@ def add_recipe_to_db(href_list, category, headers):
             name="sally\'s baking addiction",
             website_link="https://sallysbakingaddiction.com/"
         )
+
         recipe, create = models.BlogRecipe.objects.update_or_create(
             title=get_text('.tasty-recipes-title', soup),
             author=author,

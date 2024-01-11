@@ -14,6 +14,7 @@ from rest_framework.routers import DefaultRouter
 router = DefaultRouter()
 router.register('recipes', views.BlogRecipeViewSet)
 router.register('authors', views.AuthorViewSet)
+router.register('ingredients', views.IngredientViewSet)
 # router.register('authors', views.get_authors, basename='authors')
 
 

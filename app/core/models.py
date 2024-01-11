@@ -128,10 +128,10 @@ class BlogRecipe(models.Model):
     """
     Recipe object
     """
-
     title = models.CharField(max_length=255)
     author = models.ForeignKey(
         BlogAuthor,
+        related_name='recipes',
         on_delete=models.CASCADE
     )
     category = models.CharField(max_length=255)

@@ -3,8 +3,8 @@ tests for scrape.py
 """
 from django.test import TestCase
 
-from blog_recipes.scraper.get_urls import get_urls
-from blog_recipes.scraper.add_to_db import add_recipe_to_db
+from core.management.commands.utils.get_urls import get_urls
+from core.management.commands.utils.add_to_db import add_recipe_to_db
 
 from core.models import (
     BlogRecipe,
