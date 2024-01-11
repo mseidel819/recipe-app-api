@@ -37,14 +37,6 @@ class BlogInstructionSerializer(serializers.ModelSerializer):
         read_only_fields = ('id',)
 
 
-class BlogAuthorSerializer(serializers.ModelSerializer):
-    """Serializer for author object"""
-    class Meta:
-        model = BlogAuthor
-        fields = ('id', 'name', 'website_link', "recipes")
-        read_only_fields = ('id',)
-
-
 class BlogRecipeSerializer(serializers.ModelSerializer):
     """Serializer for recipes"""
 
@@ -60,9 +52,9 @@ class BlogRecipeDetailSerializer(BlogRecipeSerializer):
     """
     Serializer for recipe detail object
     """
-    ingredients = BlogIngredientSerializer(many=True)
-    notes = BlogNoteSerializer(many=True, required=False)
-    instructions = BlogInstructionSerializer(many=True, required=False)
+    ingredients = BlogIngredientSerializer(many=True, read_only=True)
+    instructions = BlogInstructionSerializer(many=True, read_only=True)
+    notes = BlogNoteSerializer(many=True, read_only=True)
 
     class Meta(BlogRecipeSerializer.Meta):
         fields = BlogRecipeSerializer.Meta.fields + (
@@ -70,4 +62,14 @@ class BlogRecipeDetailSerializer(BlogRecipeSerializer):
             "total_time", "servings", "ingredients", "instructions", "notes"
         )
 
+        read_only_fields = ('id',)
+
+
+class BlogAuthorSerializer(serializers.ModelSerializer):
+    """Serializer for author object"""
+    recipes = BlogRecipeSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = BlogAuthor
+        fields = ('id', 'name', 'website_link', "recipes")
         read_only_fields = ('id',)

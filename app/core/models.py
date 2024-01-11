@@ -144,10 +144,10 @@ class BlogRecipe(models.Model):
     cook_time = models.CharField(max_length=255)
     total_time = models.CharField(max_length=255)
     servings = models.CharField(max_length=255)
-    ingredients = models.ManyToManyField('BlogIngredient')
-    instructions = models.ManyToManyField('BlogInstruction')
+    # ingredients = models.ManyToManyField('BlogIngredient')
+    # instructions = models.ManyToManyField('BlogInstruction')
     # image = models.ImageField(null=True, upload_to=recipe_image_file_path)
-    notes = models.ManyToManyField('BlogNote')
+    # notes = models.ManyToManyField('BlogNote')
 
     def save(self, *args, **kwargs):
         """saves the slug and adds one, if not provided"""
@@ -165,6 +165,7 @@ class BlogIngredient(models.Model):
     """
     recipe = models.ForeignKey(
         BlogRecipe,
+        related_name='ingredients',
         on_delete=models.CASCADE
     )
     ingredient = models.TextField()
@@ -179,6 +180,7 @@ class BlogInstruction(models.Model):
     """
     recipe = models.ForeignKey(
         BlogRecipe,
+        related_name='instructions',
         on_delete=models.CASCADE
     )
     instruction = models.TextField()
@@ -193,6 +195,7 @@ class BlogNote(models.Model):
     """
     recipe = models.ForeignKey(
         BlogRecipe,
+        related_name='notes',
         on_delete=models.CASCADE
     )
     note = models.TextField()

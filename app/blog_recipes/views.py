@@ -14,9 +14,6 @@ from rest_framework import viewsets, mixins
 from core.models import (
     BlogRecipe,
     BlogAuthor,
-    BlogIngredient,
-    # BlogNote,
-    # BlogInstruction,
 )
 from blog_recipes import serializers
 
@@ -52,12 +49,6 @@ class BlogRecipeViewSet(
         #     return serializers.RecipeImageSerializer
         return self.serializer_class
 
-    def perform_create(self, serializer):
-        """
-        Create a new recipe
-        """
-        serializer.save()
-
 
 @extend_schema_view(
     list=extend_schema(
@@ -76,30 +67,3 @@ class AuthorViewSet(
     # permission_classes = (IsAuthenticated,)
     serializer_class = serializers.BlogAuthorSerializer
     queryset = BlogAuthor.objects.all()
-
-    # do i need this?
-    def perform_create(self, serializer):
-        """
-        Create a new object
-        """
-        serializer.save()
-
-
-class IngredientViewSet(
-    mixins.ListModelMixin,
-    viewsets.GenericViewSet
-):
-    """
-    Manage ingredients in the database
-    """
-    # authentication_classes = (TokenAuthentication,)
-    # permission_classes = (IsAuthenticated,)
-    serializer_class = serializers.BlogIngredientSerializer
-    queryset = BlogIngredient.objects.all()
-
-    # do i need this?
-    def perform_create(self, serializer):
-        """
-        Create a new object
-        """
-        serializer.save()
