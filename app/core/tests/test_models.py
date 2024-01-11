@@ -110,3 +110,122 @@ class ModelTests(TestCase):
         file_path = models.recipe_image_file_path(None, 'myimage.jpg')
         expected_path = f'uploads/recipe/{uuid}.jpg'
         self.assertEqual(file_path, expected_path)
+
+    def test_create_blog_recipe(self):
+        """
+        Test creating a new recipe
+        """
+        author = models.BlogAuthor.objects.create(
+            name="sally\'s baking addiction",
+            website_link="https://sallysbakingaddiction.com/"
+        )
+
+        recipe = models.BlogRecipe.objects.create(
+            author=author,
+            title="My Favorite Cornbread Recipe",
+            slug="my-favorite-cornbread",
+            rating=4.8,
+            num_reviews=282,
+            link="https://sallysbakingaddiction.com/my-favorite-cornbread/",
+            prep_time="10 minutes",
+            cook_time="20 minutes",
+            total_time="1 hour",
+            servings="9 servings",
+            description="I was never a fan of cornbread until this recipe!"
+        )
+        self.assertEqual(
+                    str(recipe),
+                    'My Favorite Cornbread Recipe by sally\'s baking addiction'
+                         )
+        self.assertEqual(str(author),
+                         'sally\'s baking addiction'
+                         )
+
+    def test_create_blog_ingredient(self):
+        """
+        Test creating a new ingredient
+        """
+        author = models.BlogAuthor.objects.create(
+            name="sally\'s baking addiction",
+            website_link="https://sallysbakingaddiction.com/"
+        )
+        recipe = models.BlogRecipe.objects.create(
+            author=author,
+            title="My Favorite Cornbread Recipe",
+            slug="my-favorite-cornbread",
+            rating=4.8,
+            num_reviews=282,
+            link="https://sallysbakingaddiction.com/my-favorite-cornbread/",
+            prep_time="10 minutes",
+            cook_time="20 minutes",
+            total_time="1 hour",
+            servings="9 servings",
+            description="I was never a fan of cornbread until this recipe!"
+        )
+
+        ingredient = models.BlogIngredient.objects.create(
+            ingredient="1 cup (240ml) whole milk, at room temperature",
+            recipe=recipe
+        )
+        self.assertEqual(
+            str(ingredient), '1 cup (240ml) whole milk, at room temperature'
+            )
+
+    def test_create_blog_instruction(self):
+        """
+        Test creating a new instruction
+        """
+        author = models.BlogAuthor.objects.create(
+            name="sally\'s baking addiction",
+            website_link="https://sallysbakingaddiction.com/"
+        )
+        recipe = models.BlogRecipe.objects.create(
+            author=author,
+            title="My Favorite Cornbread Recipe",
+            slug="my-favorite-cornbread",
+            rating=4.8,
+            num_reviews=282,
+            link="https://sallysbakingaddiction.com/my-favorite-cornbread/",
+            prep_time="10 minutes",
+            cook_time="20 minutes",
+            total_time="1 hour",
+            servings="9 servings",
+            description="I was never a fan of cornbread until this recipe!"
+        )
+
+        instruction = models.BlogInstruction.objects.create(
+            instruction="Preheat oven to 400\u00b0F (204\u00b0C).",
+            recipe=recipe
+        )
+        self.assertEqual(
+            str(instruction), 'Preheat oven to 400\u00b0F (204\u00b0C).'
+            )
+
+    def test_create_blog_note(self):
+        """
+        Test creating a new note
+        """
+        author = models.BlogAuthor.objects.create(
+            name="sally\'s baking addiction",
+            website_link="https://sallysbakingaddiction.com/"
+        )
+        recipe = models.BlogRecipe.objects.create(
+            author=author,
+            title="My Favorite Cornbread Recipe",
+            slug="my-favorite-cornbread",
+            rating=4.8,
+            num_reviews=282,
+            link="https://sallysbakingaddiction.com/my-favorite-cornbread/",
+            prep_time="10 minutes",
+            cook_time="20 minutes",
+            total_time="1 hour",
+            servings="9 servings",
+            description="I was never a fan of cornbread until this recipe!"
+        )
+
+        note = models.BlogNote.objects.create(
+            note="Make Ahead & Freezing Instructions...",
+            recipe=recipe
+        )
+        self.assertEqual(str(note), 'Make Ahead & Freezing Instructions...'
+                         )

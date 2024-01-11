@@ -5,6 +5,8 @@ import uuid
 import os
 from django.conf import settings
 from django.db import models
+from django.utils.text import slugify
+
 
 from django.contrib.auth.models import (
     AbstractBaseUser,
@@ -108,3 +110,95 @@ class Ingredient(models.Model):
 
     def __str__(self):
         return self.name
+
+
+# blog recipe models. condiser merging with recipe models
+class BlogAuthor(models.Model):
+    """
+    Author object
+    """
+    name = models.CharField(max_length=255)
+    website_link = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.name
+
+
+class BlogRecipe(models.Model):
+    """
+    Recipe object
+    """
+    title = models.CharField(max_length=255)
+    author = models.ForeignKey(
+        BlogAuthor,
+        related_name='recipes',
+        on_delete=models.CASCADE
+    )
+    category = models.CharField(max_length=255)
+    slug = models.SlugField(unique=True, blank=True)
+    link = models.CharField(max_length=255, blank=True)
+    rating = models.FloatField()
+    num_reviews = models.IntegerField()
+    description = models.TextField(blank=True)
+    prep_time = models.CharField(max_length=255)
+    cook_time = models.CharField(max_length=255)
+    total_time = models.CharField(max_length=255)
+    servings = models.CharField(max_length=255)
+    # ingredients = models.ManyToManyField('BlogIngredient')
+    # instructions = models.ManyToManyField('BlogInstruction')
+    # image = models.ImageField(null=True, upload_to=recipe_image_file_path)
+    # notes = models.ManyToManyField('BlogNote')
+
+    def save(self, *args, **kwargs):
+        """saves the slug and adds one, if not provided"""
+        if not self.slug:
+            self.slug = slugify(self.title)
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.title} by {self.author}"
+
+
+class BlogIngredient(models.Model):
+    """
+    Ingredient object
+    """
+    recipe = models.ForeignKey(
+        BlogRecipe,
+        related_name='ingredients',
+        on_delete=models.CASCADE
+    )
+    ingredient = models.TextField()
+
+    def __str__(self):
+        return self.ingredient
+
+
+class BlogInstruction(models.Model):
+    """
+    Instruction object
+    """
+    recipe = models.ForeignKey(
+        BlogRecipe,
+        related_name='instructions',
+        on_delete=models.CASCADE
+    )
+    instruction = models.TextField()
+
+    def __str__(self):
+        return self.instruction
+
+
+class BlogNote(models.Model):
+    """
+    Notes object
+    """
+    recipe = models.ForeignKey(
+        BlogRecipe,
+        related_name='notes',
+        on_delete=models.CASCADE
+    )
+    note = models.TextField()
+
+    def __str__(self):
+        return self.note
