@@ -24,6 +24,15 @@ def recipe_image_file_path(instance, filename):
     return os.path.join('uploads', 'recipe', filename)  # return the path
 
 
+def blog_recipe_image_file_path(instance, filename):
+    """
+    Generate file path for new recipe image
+    """
+    ext = os.path.splitext(filename)[1]  # get the extension
+    filename = f'{uuid.uuid4()}{ext}'  # generate a unique filename
+    return os.path.join('uploads', 'blog-recipe', filename)  # return the path
+
+
 class UserManager(BaseUserManager):
     """
     Custom user manager
@@ -144,10 +153,7 @@ class BlogRecipe(models.Model):
     cook_time = models.CharField(max_length=255)
     total_time = models.CharField(max_length=255)
     servings = models.CharField(max_length=255)
-    # ingredients = models.ManyToManyField('BlogIngredient')
-    # instructions = models.ManyToManyField('BlogInstruction')
     # image = models.ImageField(null=True, upload_to=recipe_image_file_path)
-    # notes = models.ManyToManyField('BlogNote')
 
     def save(self, *args, **kwargs):
         """saves the slug and adds one, if not provided"""
@@ -157,6 +163,22 @@ class BlogRecipe(models.Model):
 
     def __str__(self):
         return f"{self.title} by {self.author}"
+
+
+class BlogImage(models.Model):
+    """
+    Image object
+    """
+    recipe = models.ForeignKey(
+        BlogRecipe,
+        related_name='images',
+        on_delete=models.CASCADE
+    )
+    image_url = models.ImageField(null=True,
+                                  upload_to=blog_recipe_image_file_path)
+
+    def __str__(self):
+        return self.image
 
 
 class BlogIngredient(models.Model):

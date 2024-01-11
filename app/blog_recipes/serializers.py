@@ -10,6 +10,7 @@ from core.models import (
     BlogNote,
     BlogInstruction,
     BlogAuthor,
+    BlogImage,
 )
 
 
@@ -61,6 +62,17 @@ class BlogRecipeSerializer(serializers.ModelSerializer):
         read_only_fields = ('id',)
 
 
+class BlogRecipeImageSerializer(serializers.ModelSerializer):
+    """
+    Serializer for uploading images to recipes
+    """
+    class Meta:
+        """Meta class"""
+        model = BlogImage
+        fields = ("image_url",)
+        read_only_fields = ("id",)
+
+
 class BlogRecipeDetailSerializer(BlogRecipeSerializer):
     """
     Serializer for recipe detail object
@@ -68,14 +80,16 @@ class BlogRecipeDetailSerializer(BlogRecipeSerializer):
     ingredients = serializers.SerializerMethodField()
     instructions = serializers.SerializerMethodField()
     notes = serializers.SerializerMethodField()
+    # images = serializers.SerializerMethodField()
+    images = BlogRecipeImageSerializer(many=True, read_only=True)
 
     class Meta(BlogRecipeSerializer.Meta):
         """Meta class"""
         fields = BlogRecipeSerializer.Meta.fields + (
             "description", "num_reviews", "prep_time", "cook_time",
-            "total_time", "servings", "ingredients", "instructions", "notes"
+            "total_time", "servings", "images",
+            "ingredients", "instructions", "notes"
         )
-
         read_only_fields = ('id',)
 
     def get_ingredients(self, obj):
@@ -86,7 +100,7 @@ class BlogRecipeDetailSerializer(BlogRecipeSerializer):
 
     def get_instructions(self, obj):
         """orders instructions by id to preserve original order"""
-        ordered_instructions = obj.ingredients.order_by('id')
+        ordered_instructions = obj.instructions.order_by('id')
         return [instruction['instruction']
                 for instruction in ordered_instructions.values()]
 
@@ -94,3 +108,7 @@ class BlogRecipeDetailSerializer(BlogRecipeSerializer):
         """orders notes by id to preserve original order"""
         ordered_notes = obj.notes.order_by('id')
         return [note['note'] for note in ordered_notes.values()]
+    # def get_images(self, obj):
+    #     """orders images by id to preserve original order"""
+    #     ordered_images = obj.images.order_by('id')
+    #     return [ordered_images.values()]
