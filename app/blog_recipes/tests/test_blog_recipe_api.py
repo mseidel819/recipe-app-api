@@ -85,7 +85,7 @@ class BlogRecipeApiTests(TestCase):
             author=self.author,
             slug="chocolate-cake-2")
         res = self.client.get(RECIPES_URL)
-        recipes = BlogRecipe.objects.all().order_by("id")
+        recipes = BlogRecipe.objects.all().order_by("-id")
         serializer = BlogRecipeSerializer(recipes, many=True)
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(res.data, serializer.data)
@@ -99,3 +99,50 @@ class BlogRecipeApiTests(TestCase):
         res = self.client.get(url)
         serializer = BlogRecipeDetailSerializer(recipe)
         self.assertEqual(res.data, serializer.data)
+
+    def test_filter_by_author_query_params(self):
+        """
+        Test filtering recipes by author query params
+        """
+        author2 = create_author(name="author2")
+        recipe1 = create_recipe(author=self.author)
+        recipe2 = create_recipe(author=author2, slug="recipe2")
+        recipe3 = create_recipe(author=self.author, slug="recipe3")
+        res = self.client.get(
+            RECIPES_URL,
+            {"authors": f"{self.author.id}"}
+        )
+        serializer1 = BlogRecipeSerializer(recipe1)
+        serializer2 = BlogRecipeSerializer(recipe2)
+        serializer3 = BlogRecipeSerializer(recipe3)
+        self.assertIn(serializer1.data, res.data)
+        self.assertNotIn(serializer2.data, res.data)
+        self.assertIn(serializer3.data, res.data)
+        self.assertEqual(len(res.data), 2)
+
+    def test_filter_by_category_query_params(self):
+        """
+        Test filtering recipes by category query params
+        """
+        recipe1 = create_recipe(author=self.author)
+        recipe2 = create_recipe(
+            author=self.author,
+            slug="recipe2",
+            category="cookies"
+        )
+        recipe3 = create_recipe(
+            author=self.author,
+            slug="recipe3",
+            category="cookies"
+        )
+        res = self.client.get(
+            RECIPES_URL,
+            {"categories": "cookies"}
+        )
+        serializer1 = BlogRecipeSerializer(recipe1)
+        serializer2 = BlogRecipeSerializer(recipe2)
+        serializer3 = BlogRecipeSerializer(recipe3)
+        self.assertNotIn(serializer1.data, res.data)
+        self.assertIn(serializer2.data, res.data)
+        self.assertIn(serializer3.data, res.data)
+        self.assertEqual(len(res.data), 2)
