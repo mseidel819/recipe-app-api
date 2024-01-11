@@ -69,13 +69,8 @@ class BlogRecipeImageSerializer(serializers.ModelSerializer):
     class Meta:
         """Meta class"""
         model = BlogImage
-        fields = ("id", "image")
+        fields = ("image_url",)
         read_only_fields = ("id",)
-        extra_kwargs = {
-            "image": {
-                "required": True,
-            }
-        }
 
 
 class BlogRecipeDetailSerializer(BlogRecipeSerializer):
@@ -85,7 +80,8 @@ class BlogRecipeDetailSerializer(BlogRecipeSerializer):
     ingredients = serializers.SerializerMethodField()
     instructions = serializers.SerializerMethodField()
     notes = serializers.SerializerMethodField()
-    images = serializers.SerializerMethodField()
+    # images = serializers.SerializerMethodField()
+    images = BlogRecipeImageSerializer(many=True, read_only=True)
 
     class Meta(BlogRecipeSerializer.Meta):
         """Meta class"""
@@ -112,8 +108,7 @@ class BlogRecipeDetailSerializer(BlogRecipeSerializer):
         """orders notes by id to preserve original order"""
         ordered_notes = obj.notes.order_by('id')
         return [note['note'] for note in ordered_notes.values()]
-
-    def get_images(self, obj):
-        """orders images by id to preserve original order"""
-        ordered_images = obj.images.order_by('id')
-        return [image['image'] for image in ordered_images.values()]
+    # def get_images(self, obj):
+    #     """orders images by id to preserve original order"""
+    #     ordered_images = obj.images.order_by('id')
+    #     return [ordered_images.values()]

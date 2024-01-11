@@ -174,7 +174,8 @@ class BlogImage(models.Model):
         related_name='images',
         on_delete=models.CASCADE
     )
-    image = models.ImageField(null=True, upload_to=blog_recipe_image_file_path)
+    image_url = models.ImageField(null=True,
+                                  upload_to=blog_recipe_image_file_path)
 
     def __str__(self):
         return self.image
