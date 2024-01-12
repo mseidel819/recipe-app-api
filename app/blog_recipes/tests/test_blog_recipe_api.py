@@ -14,6 +14,7 @@ from core.models import (
     # BlogInstruction,
     BlogAuthor,
     # BlogImage,
+    BlogCategory,
 )
 
 from blog_recipes.serializers import (
@@ -39,7 +40,6 @@ def create_recipe(author, **params):
     defaults = {
         "title": "Deliciously Moist Chocolate Layer Cake",
         "author": author,
-        "category": "desserts-pies",
         "slug": "triple-chocolate-layer-cake",
         "rating": 4.9,
         "num_reviews": 918,
@@ -124,17 +124,37 @@ class BlogRecipeApiTests(TestCase):
         """
         Test filtering recipes by category query params
         """
-        recipe1 = create_recipe(author=self.author)
+        author= create_author(name="author2")
+        cookies = BlogCategory.objects.create(
+            name="cookies",
+            author=author
+        )
+        pizza = BlogCategory.objects.create(
+            name="pizza",
+            author=author
+        )
+
+        cake = BlogCategory.objects.create(
+            name="cake",
+            author=author
+        )
+
+        recipe1 = create_recipe(
+            author=self.author,
+)
+        recipe1.categories.add(cookies)
         recipe2 = create_recipe(
             author=self.author,
             slug="recipe2",
-            category="cookies"
         )
+        recipe2.categories.add(cookies)
+        recipe2.categories.add(pizza)
+
         recipe3 = create_recipe(
             author=self.author,
             slug="recipe3",
-            category="cookies"
         )
+        recipe3.categories.add(cake)
         res = self.client.get(
             RECIPES_URL,
             {"categories": "cookies"}
@@ -142,7 +162,7 @@ class BlogRecipeApiTests(TestCase):
         serializer1 = BlogRecipeSerializer(recipe1)
         serializer2 = BlogRecipeSerializer(recipe2)
         serializer3 = BlogRecipeSerializer(recipe3)
-        self.assertNotIn(serializer1.data, res.data)
+        self.assertIn(serializer1.data, res.data)
         self.assertIn(serializer2.data, res.data)
-        self.assertIn(serializer3.data, res.data)
+        self.assertNotIn(serializer3.data, res.data)
         self.assertEqual(len(res.data), 2)

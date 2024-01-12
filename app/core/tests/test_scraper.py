@@ -55,7 +55,7 @@ class ScrapeTests(TestCase):
         for recipe in recipes:
             self.assertTrue(recipe.title)
             self.assertTrue(recipe.author)
-            self.assertTrue(recipe.category)
+            self.assertTrue(recipe.categories)
             self.assertTrue(recipe.slug)
             self.assertTrue(recipe.link)
             self.assertGreaterEqual(recipe.rating, 0)
@@ -96,7 +96,7 @@ class ScrapeTests(TestCase):
         for recipe in recipes1:
             self.assertTrue(recipe.title)
             self.assertTrue(recipe.author)
-            self.assertTrue(recipe.category)
+            self.assertTrue(recipe.categories)
             self.assertTrue(recipe.slug)
             self.assertTrue(recipe.link)
             self.assertGreaterEqual(recipe.rating, 0)
