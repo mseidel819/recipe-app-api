@@ -41,8 +41,8 @@
     "name": "Budjet Bytes",
     "website_link": "https://www.budgetbytes.com/",
     "category_entry_url": "https://www.budgetbytes.com/category/recipes/",
-    "categories": [
-      "appetizers",
+    "categories": ["appetizers"],
+    "commented_categories": [
       "beansandgrains",
       "bowl-meals",
       "bread",
@@ -79,30 +79,30 @@
       "vegetables"
     ],
     "selectors": {
-      "links": "",
-      "next_btn": "",
-      "main_recipe_class": "",
-      "title": "",
-      "rating": "",
-      "num_reviews": "",
-      "description": "",
-      "prep_time": "",
-      "cook_time": "",
-      "total_time": "",
-      "servings": "",
+      "links": ".archive-post-listing > article > a",
+      "next_btn": ".pagination-next > a",
+      "main_recipe_class": ".bb-recipe-card",
+      "title": ".wprm-recipe-name",
+      "rating": ".wprm-recipe-rating-average",
+      "num_reviews": ".wprm-recipe-rating-count",
+      "description": ".wprm-recipe-summary > span",
+      "prep_time": ".wprm-recipe-prep-time-container > .wprm-recipe-time > .wprm-recipe-details",
+      "cook_time": ".wprm-recipe-cook-time-container > .wprm-recipe-time > .wprm-recipe-details",
+      "total_time": ".wprm-recipe-total-time-container > .wprm-recipe-time > .wprm-recipe-details",
+      "servings": ".wprm-recipe-servings",
       "ingredients": {
-        "class": "",
-        "list_type": ""
+        "class": ".wprm-recipe-ingredient-group",
+        "list_type": "ul"
       },
       "instructions": {
-        "class": "",
-        "list_type": ""
+        "class": ".wprm-recipe-instruction-group",
+        "list_type": "ul"
       },
       "notes": {
         "class": "",
         "list_type": ""
       },
-      "img_html": ""
+      "img_html": ".type-post > .entry-content img"
     }
   }
 }

@@ -56,15 +56,16 @@ def add_recipe_to_db(href_list, category, headers, website):
         slug = parsed_url.path.replace("/", "")
 
         existing_recipe = models.BlogRecipe.objects.filter(
+            author=author,
             slug=slug
         ).first()
 
         if existing_recipe:
             existing_recipe.title = get_text(
                 website['selectors']['title'],
-                soup),
-            existing_recipe.slug = slug,
-            existing_recipe.link = url,
+                soup)
+            existing_recipe.slug = slug
+            existing_recipe.link = url
             existing_recipe.rating = 0 if get_text(
                website['selectors']['rating'],
                soup
@@ -118,8 +119,7 @@ def add_recipe_to_db(href_list, category, headers, website):
                                    soup),
                 total_time=get_text(website['selectors']['total_time'],
                                     soup),
-                servings=get_text(website['selectors']['servings'],
-                                  soup),
+                servings=get_text(website['selectors']['servings'], soup)
             )
 
         if category not in recipe.categories.all():
@@ -145,56 +145,65 @@ def add_recipe_to_db(href_list, category, headers, website):
                 recipe=recipe,
                 instruction=instruction
             )
-        notes = get_scraped_arrays(
-            website['selectors']['notes']['class'],
-            website['selectors']['notes']['list_type'],
-            soup
-            )
-        for note in notes:
-            models.BlogNote.objects.update_or_create(
-                recipe=recipe,
-                note=note
-            )
 
-        images = []
+        if website['selectors']['notes']["class"] != "":
+            notes = get_scraped_arrays(
+                website['selectors']['notes']['class'],
+                website['selectors']['notes']['list_type'],
+                soup
+                )
+            for note in notes:
+                models.BlogNote.objects.update_or_create(
+                    recipe=recipe,
+                    note=note
+                )
 
-        img_html = soup.select(website['selectors']['img_html'])
-        for img in img_html:
-            img_src = img.get('src')
-            if img_src[:5] == "https":
-                images.append(img.get('src'))
+        existing_image = models.BlogImage.objects.filter(
+                    recipe=recipe,
+                    image_url__isnull=False
+                ).first()
 
-        for image_url in images:
-            # Download the image from the URL
-            response = requests.get(image_url, headers=headers)
+        if not existing_image:
+            images = []
 
-            # Try to open the image with PIL
-            image = Image.open(BytesIO(response.content))
+            img_html = soup.select(website['selectors']['img_html'])
+            for img in img_html:
+                img_src = img.get('src')
+                if img_src[:5] == "https":
+                    images.append(img.get('src'))
 
-            if image.mode != 'RGB':
-                image = image.convert('RGB')
+            for image_url in images:
+                # Download the image from the URL
+                response = requests.get(image_url, headers=headers)
 
-            # Generate a unique filename
-            ext = os.path.splitext(image_url.split("/")[-1])[1]
-            filename = f'{uuid.uuid4()}{ext}'
+                # Try to open the image with PIL
+                image = Image.open(BytesIO(response.content))
 
-            # Create an InMemoryUploadedFile from the downloaded image
-            image_io = BytesIO()
-            image.save(image_io, format='JPEG')
+                if image.mode != 'RGB':
+                    image = image.convert('RGB')
 
-            uploaded_image = InMemoryUploadedFile(
-                image_io,  # file
-                None,  # field_name
-                filename,  # file name
-                'image/jpeg',  # content_type
-                image_io.tell,  # size
-                None  # content_type_extra
-            )
+                # Generate a unique filename
+                ext = os.path.splitext(image_url.split("/")[-1])[1]
+                filename = f'{uuid.uuid4()}{ext}'
 
-            # Update or create the BlogImage instance with the uploaded image
-            models.BlogImage.objects.update_or_create(
-                recipe=recipe,
-                image_url=uploaded_image
-            )
+                # Create an InMemoryUploadedFile from the downloaded image
+                image_io = BytesIO()
+                image.save(image_io, format='JPEG')
+
+                uploaded_image = InMemoryUploadedFile(
+                    image_io,  # file
+                    None,  # field_name
+                    filename,  # file name
+                    'image/jpeg',  # content_type
+                    image_io.tell,  # size
+                    None  # content_type_extra
+                )
+
+                # Update or create the BlogImage instance
+                # with the uploaded image
+                models.BlogImage.objects.update_or_create(
+                    recipe=recipe,
+                    image_url=uploaded_image
+                )
 
     print(f"Data collected!({len(href_list)} recipes added to db)")
