@@ -27,7 +27,14 @@ There are two setions of this project. both (will eventually) require user authe
 In order to refresh the recipe DB within the docker env, run the following command:
 
 ```
-docker-compose run --rm app sh -c "python manage.py scrape"
+docker-compose run --rm app sh -c "python manage.py scrape [blog_name]"
 ```
+
+A list of blogs to scrape are:
+
+- sallys-baking-addiction
+- budjet-bytes
+
+These are updated in core/management/commands/utils/blog_data.json
 
 TODO: add parameters to scrape.py to control how much is scraped
