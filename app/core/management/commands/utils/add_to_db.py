@@ -48,11 +48,23 @@ def add_recipe_to_db(href_list, category, headers):
             website_link="https://sallysbakingaddiction.com/"
         )
 
+        category, create = models.BlogCategory.objects.update_or_create(
+            name=category,
+            author=author
+        )
+
+        # if models.BlogRecipe.objects.filter(
+        # slug=parsed_url.path.replace("/", "")
+        # ).exists():
+        #     continue
+        # else:
+        slug = parsed_url.path.replace("/", "")
+
         recipe, create = models.BlogRecipe.objects.update_or_create(
             title=get_text('.tasty-recipes-title', soup),
             author=author,
-            category=category,
-            slug=parsed_url.path.replace("/", ""),
+            # categories=recipe.categories.set(category),
+            slug=slug,
             link=url,
             rating=0 if get_text(
                 ".rating-label > .average", soup
@@ -66,6 +78,8 @@ def add_recipe_to_db(href_list, category, headers):
             total_time=get_text(".tasty-recipes-total-time", soup),
             servings=get_text(".tasty-recipes-yield", soup),
         )
+        if category not in recipe.categories.all():
+            recipe.categories.add(category)
 
         ingredients = get_scraped_arrays(
             ".tasty-recipes-ingredients-body", "ul", soup
@@ -104,6 +118,9 @@ def add_recipe_to_db(href_list, category, headers):
 
             # Try to open the image with PIL
             image = Image.open(BytesIO(response.content))
+
+            if image.mode != 'RGB':
+                image = image.convert('RGB')
 
             # Generate a unique filename
             ext = os.path.splitext(image_url.split("/")[-1])[1]

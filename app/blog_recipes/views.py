@@ -42,7 +42,7 @@ class BlogRecipeViewSet(
         mixins.RetrieveModelMixin,
      ):
     """
-    Manage recipes in the database
+    Get individual recipe from the database
     """
     serializer_class = serializers.BlogRecipeDetailSerializer
     queryset = BlogRecipe.objects.all()
@@ -69,8 +69,8 @@ class BlogRecipeViewSet(
             queryset = queryset.filter(author__id__in=author_ids)
 
         if categories:
-            queryset = queryset.filter(category__in=categories.split(","))
-
+            categories = categories.split(",")
+            queryset = queryset.filter(categories__name__in=categories)
         return queryset.order_by("-id").distinct()
 
     def get_serializer_class(self):

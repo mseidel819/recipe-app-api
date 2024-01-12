@@ -11,6 +11,7 @@ from core.models import (
     BlogInstruction,
     BlogAuthor,
     BlogImage,
+    BlogCategory,
 )
 
 
@@ -38,28 +39,33 @@ class BlogInstructionSerializer(serializers.ModelSerializer):
         fields = ('instruction',)
 
 
-class BlogAuthorSerializer(serializers.ModelSerializer):
-    """Serializer for author object"""
+class BlogCategorySerializer(serializers.ModelSerializer):
+    """Serializer for category object"""
     # recipes = BlogRecipeSerializer(many=True, read_only=True)
 
     class Meta:
         """Meta class"""
-        model = BlogAuthor
-        fields = ('id', 'name', 'website_link')
+        model = BlogCategory
+        fields = ('id', "name")
         read_only_fields = ('id',)
 
 
-class BlogRecipeSerializer(serializers.ModelSerializer):
-    """Serializer for recipes"""
-    author = BlogAuthorSerializer(read_only=True)
+class BlogAuthorSerializer(serializers.ModelSerializer):
+    """Serializer for author object"""
+    # recipes = BlogRecipeSerializer(many=True, read_only=True)
+    categories = serializers.SerializerMethodField()
 
     class Meta:
         """Meta class"""
-        model = BlogRecipe
-        fields = (
-            "id", "title", "link", "rating", "category", "author", "slug",
-        )
+        model = BlogAuthor
+        fields = ('id', 'name', 'website_link', 'categories')
         read_only_fields = ('id',)
+
+    def get_categories(self, obj):
+        """orders ingredients by id to preserve original order"""
+        ordered_categories = obj.categories.order_by('id')
+        return [category['name']
+                for category in ordered_categories.values()]
 
 
 class BlogRecipeImageSerializer(serializers.ModelSerializer):
@@ -71,6 +77,61 @@ class BlogRecipeImageSerializer(serializers.ModelSerializer):
         model = BlogImage
         fields = ("image_url",)
         read_only_fields = ("id",)
+
+
+class BlogRecipeSerializer(serializers.ModelSerializer):
+    """Serializer for recipes"""
+    author = serializers.SerializerMethodField()
+    categories = serializers.SerializerMethodField()
+
+    class Meta:
+        """Meta class"""
+        model = BlogRecipe
+        fields = (
+            "id", "title", "categories", "link", "rating", "author", "slug",
+        )
+        read_only_fields = ('id',)
+
+    def get_author(self, obj):
+        """orders ingredients by id to preserve original order"""
+        return obj.author.name
+
+    # def _get_or_create_categories(self, categories, recipe):
+    #     """handle getting or creating ingredients"""
+    #     for category in categories:
+    #         cat_obj, create = BlogCategory.objects.get_or_create(
+    #             author=recipe.author,
+    #             **category
+    #         )
+    #         recipe.categories.add(cat_obj)
+
+    # def create(self, validated_data):
+    #     """Create a recipe"""
+    #     categories = validated_data.pop('categories', [])
+    #     recipe = BlogRecipe.objects.create(**validated_data)
+    #     self._get_or_create_categories(categories, recipe)
+
+    #     return recipe
+
+    # def update(self, instance, validated_data):
+    #     """Update a recipe"""
+
+    #     categories = validated_data.pop('categories', [])
+    #     if categories is not None:
+    #         instance.categories.clear()
+    #         self._get_or_create_categories(categories, instance)
+
+    #     for key, value in validated_data.items():
+    #         setattr(instance, key, value)
+
+    #     instance.save()
+    #     return instance
+
+    def get_categories(self, obj):
+        """orders categories by id to preserve original order"""
+        ordered_categories = obj.categories.order_by('id')
+        return [category['name']
+                for category in ordered_categories.values()]
 
 
 class BlogRecipeDetailSerializer(BlogRecipeSerializer):
@@ -108,7 +169,3 @@ class BlogRecipeDetailSerializer(BlogRecipeSerializer):
         """orders notes by id to preserve original order"""
         ordered_notes = obj.notes.order_by('id')
         return [note['note'] for note in ordered_notes.values()]
-    # def get_images(self, obj):
-    #     """orders images by id to preserve original order"""
-    #     ordered_images = obj.images.order_by('id')
-    #     return [ordered_images.values()]

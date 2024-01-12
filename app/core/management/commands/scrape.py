@@ -16,10 +16,10 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         """Handle the command"""
         categories = [
-                    #   'bread',
-                    #   "breakfast-treats",
-                    #   "desserts/cakes",
-                    #   "desserts/cookies",
+                    'bread',
+                    "breakfast-treats",
+                    "desserts/cakes",
+                    "desserts/cookies",
                     "desserts/pies"
                     ]
 

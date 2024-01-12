@@ -143,8 +143,8 @@ class BlogRecipe(models.Model):
         related_name='recipes',
         on_delete=models.CASCADE
     )
-    category = models.CharField(max_length=255)
-    slug = models.SlugField(unique=True, blank=True)
+    categories = models.ManyToManyField('BlogCategory')
+    slug = models.SlugField(unique=True, blank=True, max_length=100)
     link = models.CharField(max_length=255, blank=True)
     rating = models.FloatField()
     num_reviews = models.IntegerField()
@@ -224,3 +224,18 @@ class BlogNote(models.Model):
 
     def __str__(self):
         return self.note
+
+
+class BlogCategory(models.Model):
+    """
+    Category object
+    """
+    name = models.CharField(max_length=255)
+    author = models.ForeignKey(
+        BlogAuthor,
+        related_name='categories',
+        on_delete=models.CASCADE
+    )
+
+    def __str__(self):
+        return self.name

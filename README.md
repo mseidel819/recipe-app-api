@@ -1,6 +1,15 @@
 # recipe-app-api
 
+This is a personal project that I needed to make because of how frustrated I get with recipe blogs. Currently, it is set up to extract all of the recipe info from Sally's Baking Addiction, and throw it into an API that I can access through another react app. The next step is to create a frontend in order to display the data so I can access my favorite recipes without all of the fluff and ads that make recipe blogs suck.
+
 There are two setions of this project. both (will eventually) require user authentication:
+
+## app/blog_recipes
+
+- The /app/blog_recipes API is a recipe storage system that scrapes recipes from my most used food blogs.
+- Allows the user to see all of the recipes collected from specific food blogs. Users are only allowed to GET recipes from this API.
+- The recipes are scraped from the food blogs using the scrape.py file.
+- Built using Django REST Framework and the project is built using Docker.
 
 ## app/recipe
 
@@ -8,12 +17,6 @@ There are two setions of this project. both (will eventually) require user authe
 - It allows users to create, update, and manage their own recipes.
 - It also allows users to tag recipes with different tags and ingredients.
 - Built using Django REST Framework and the project is built using Docker. This API only lets users see their own personal recipes.
-
-## app/blog_recipes
-
-- Allows the user to see all of the recipes collected from specific food blogs. Users are only allowed to GET recipes from this API.
-- The recipes are scraped from the food blogs using the scraper.py file.
-- Built using Django REST Framework and the project is built using Docker.
 
 ## Endpoints
 
