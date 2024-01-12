@@ -26,7 +26,9 @@ def get_urls(url, headers, website):
         next_url = ''
 
         if soup.select(website['selectors']['next_btn']):
-            next_url = soup.select(website['selectors']['next_btn'])[0].get('href')
+            next_url = soup.select(
+                website['selectors']['next_btn']
+                )[0].get('href')
 
         url_copy = next_url
 

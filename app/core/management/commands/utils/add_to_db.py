@@ -60,20 +60,38 @@ def add_recipe_to_db(href_list, category, headers, website):
         ).first()
 
         if existing_recipe:
-            existing_recipe.title=get_text(website['selectors']['title'], soup),
-            existing_recipe.slug=slug,
-            existing_recipe.link=url,
-            existing_recipe.rating=0 if get_text(
-               website['selectors']['rating'], soup
-                ) == "" else float(get_text(website['selectors']['rating'], soup))
-            existing_recipe.num_reviews=0 if get_text(
-                website['selectors']['num_reviews'], soup
-                ) == "" else get_text(website['selectors']['num_reviews'], soup)
-            existing_recipe.description=get_text(website['selectors']['description'], soup)
-            existing_recipe.prep_time=get_text(website['selectors']['prep_time'], soup)
-            existing_recipe.cook_time=get_text(website['selectors']['cook_time'], soup)
-            existing_recipe.total_time=get_text(website['selectors']['total_time'], soup)
-            existing_recipe.servings=get_text(website['selectors']['servings'], soup)
+            existing_recipe.title = get_text(
+                website['selectors']['title'],
+                soup),
+            existing_recipe.slug = slug,
+            existing_recipe.link = url,
+            existing_recipe.rating = 0 if get_text(
+               website['selectors']['rating'],
+               soup
+                ) == "" else float(get_text(
+                    website['selectors']['rating'],
+                    soup))
+            existing_recipe.num_reviews = 0 if get_text(
+                website['selectors']['num_reviews'],
+                soup
+                ) == "" else get_text(
+                    website['selectors']['num_reviews'],
+                    soup)
+            existing_recipe.description = get_text(
+                website['selectors']['description'],
+                soup)
+            existing_recipe.prep_time = get_text(
+                website['selectors']['prep_time'],
+                soup)
+            existing_recipe.cook_time = get_text(
+                website['selectors']['cook_time'],
+                soup)
+            existing_recipe.total_time = get_text(
+                website['selectors']['total_time'],
+                soup)
+            existing_recipe.servings = get_text(
+                website['selectors']['servings'],
+                soup)
             existing_recipe.save()
             recipe = existing_recipe
         else:
@@ -83,23 +101,34 @@ def add_recipe_to_db(href_list, category, headers, website):
                 slug=slug,
                 link=url,
                 rating=0 if get_text(
-                website['selectors']['rating'], soup
-                    ) == "" else float(get_text(website['selectors']['rating'], soup)),
+                            website['selectors']['rating'], soup
+                            ) == "" else float(
+                                get_text(website['selectors']['rating'],
+                                         soup)),
                 num_reviews=0 if get_text(
                     website['selectors']['num_reviews'], soup
-                    ) == "" else get_text(website['selectors']['num_reviews'], soup),
-                description=get_text(website['selectors']['description'], soup),
-                prep_time=get_text(website['selectors']['prep_time'], soup),
-                cook_time=get_text(website['selectors']['cook_time'], soup),
-                total_time=get_text(website['selectors']['total_time'], soup),
-                servings=get_text(website['selectors']['servings'], soup),
+                    ) == "" else get_text(
+                        website['selectors']['num_reviews'], soup
+                        ),
+                description=get_text(website['selectors']['description'],
+                                     soup),
+                prep_time=get_text(website['selectors']['prep_time'],
+                                   soup),
+                cook_time=get_text(website['selectors']['cook_time'],
+                                   soup),
+                total_time=get_text(website['selectors']['total_time'],
+                                    soup),
+                servings=get_text(website['selectors']['servings'],
+                                  soup),
             )
 
         if category not in recipe.categories.all():
             recipe.categories.add(category)
 
         ingredients = get_scraped_arrays(
-            website['selectors']['ingredients']['class'], website['selectors']['ingredients']['list_type'], soup
+            website['selectors']['ingredients']['class'],
+            website['selectors']['ingredients']['list_type'],
+            soup
             )
         for ingredient in ingredients:
             models.BlogIngredient.objects.update_or_create(
@@ -107,14 +136,20 @@ def add_recipe_to_db(href_list, category, headers, website):
                 ingredient=ingredient
             )
         instructions = get_scraped_arrays(
-            website['selectors']['instructions']['class'], website['selectors']['instructions']['list_type'], soup
+            website['selectors']['instructions']['class'],
+            website['selectors']['instructions']['list_type'],
+            soup
             )
         for instruction in instructions:
             models.BlogInstruction.objects.update_or_create(
                 recipe=recipe,
                 instruction=instruction
             )
-        notes = get_scraped_arrays(website['selectors']['notes']['class'], website['selectors']['notes']['list_type'], soup)
+        notes = get_scraped_arrays(
+            website['selectors']['notes']['class'],
+            website['selectors']['notes']['list_type'],
+            soup
+            )
         for note in notes:
             models.BlogNote.objects.update_or_create(
                 recipe=recipe,

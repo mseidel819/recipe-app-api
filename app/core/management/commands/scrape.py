@@ -9,7 +9,10 @@ from django.core.management.base import BaseCommand
 
 import json
 
-with open('core/management/commands/utils/blog_data.json', 'r', encoding="utf-8") as file:
+with open(
+    'core/management/commands/utils/blog_data.json',
+    'r', encoding="utf-8"
+      ) as file:
     data = json.load(file)
 
 
@@ -24,16 +27,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         """Handle the command"""
-        categories = [
-                    # 'bread',
-                    # "breakfast-treats",
-                    # "desserts/cakes",
-                    # "desserts/cookies",
-                    "desserts/pies"
-                    ]
-
         website = data[options['website'][0]]
-
 
         HEADERS = {'User-Agent': 'Mozilla/5.0 (iPad; CPU OS 12_2 like Mac OS X)\
                 AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148'}
