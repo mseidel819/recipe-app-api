@@ -124,7 +124,7 @@ class BlogRecipeApiTests(TestCase):
         """
         Test filtering recipes by category query params
         """
-        author= create_author(name="author2")
+        author = create_author(name="author2")
         cookies = BlogCategory.objects.create(
             name="cookies",
             author=author
@@ -141,7 +141,7 @@ class BlogRecipeApiTests(TestCase):
 
         recipe1 = create_recipe(
             author=self.author,
-)
+        )
         recipe1.categories.add(cookies)
         recipe2 = create_recipe(
             author=self.author,
