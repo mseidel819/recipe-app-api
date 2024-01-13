@@ -70,7 +70,6 @@ class BlogAuthorSerializer(serializers.ModelSerializer):
         return obj.recipes.count()
 
 
-
 class BlogRecipeImageSerializer(serializers.ModelSerializer):
     """
     Serializer for uploading images to recipes

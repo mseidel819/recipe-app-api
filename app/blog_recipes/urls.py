@@ -13,7 +13,8 @@ from rest_framework.routers import DefaultRouter
 router_recipes = DefaultRouter()
 # router.register('recipes', views.BlogRecipeViewSet)
 # router.register('authors', views.AuthorViewSet)
-router_recipes.register('', views.BlogRecipeByAuthorViewSet)
+router_recipes.register(
+    '', views.BlogRecipeByAuthorViewSet, basename='blogrecipe')
 
 router_author = DefaultRouter()
 router_author.register('authors', views.AuthorViewSet, basename='blogauthor')

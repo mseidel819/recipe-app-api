@@ -19,14 +19,14 @@ from blog_recipes.serializers import (
 )
 
 
-RECIPES_URL = reverse("blog-recipes:blogrecipe-list")
+RECIPES_URL = reverse("blog-recipes:blogrecipe-list", args=[0])
 
 
 def detail_url(recipe_slug):
     """
     Return recipe detail url
     """
-    return reverse("blog-recipes:blogrecipe-detail", args=[recipe_slug])
+    return reverse("blog-recipes:blogrecipe-detail", args=[0, recipe_slug])
 
 
 def create_recipe(author, **params):
@@ -80,8 +80,9 @@ class BlogRecipeApiTests(TestCase):
             title="cake2",
             author=self.author,
             slug="chocolate-cake-2")
-        res = self.client.get(RECIPES_URL)
-        recipes = BlogRecipe.objects.all().order_by("-id")
+        res = self.client.get(
+            reverse("blog-recipes:blogrecipe-list", args=[self.author.id]))
+        recipes = BlogRecipe.objects.all().order_by("id")
         serializer = BlogRecipeSerializer(recipes, many=True)
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(res.data, serializer.data)
@@ -132,7 +133,7 @@ class BlogRecipeApiTests(TestCase):
         )
         recipe3.categories.add(cake)
         res = self.client.get(
-            RECIPES_URL,
+            reverse("blog-recipes:blogrecipe-list", args=[self.author.id]),
             {"categories": "cookies"}
         )
         serializer1 = BlogRecipeSerializer(recipe1)
