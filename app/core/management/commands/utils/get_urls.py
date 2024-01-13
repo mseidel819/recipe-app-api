@@ -6,7 +6,7 @@ import requests
 from bs4 import BeautifulSoup as bs
 
 
-def get_urls(url, headers):
+def get_urls(url, headers, website):
     """
     gets all urls for the recipes in a category and returns a list of them
     """
@@ -18,15 +18,17 @@ def get_urls(url, headers):
     while not url_copy == "":
         res = requests.get(url_copy, headers=headers)
         soup = bs(res.text, 'html.parser')
-        links = soup.select('.archive-content > article > a')
+        links = soup.select(website['selectors']['links'])
         hrefs = [link.get('href') for link in links]
 
         print('Adding %s links to list...' % len(hrefs))
         href_list.extend(hrefs)
         next_url = ''
 
-        if soup.select('.nav-links > .next'):
-            next_url = soup.select('.nav-links > .next')[0].get('href')
+        if soup.select(website['selectors']['next_btn']):
+            next_url = soup.select(
+                website['selectors']['next_btn']
+                )[0].get('href')
 
         url_copy = next_url
 

@@ -14,7 +14,7 @@ from django.core.files.uploadedfile import InMemoryUploadedFile
 from core import models
 
 
-def add_recipe_to_db(href_list, category, headers):
+def add_recipe_to_db(href_list, category, headers, website):
     """
     creates a json file from a list of urls
     """
@@ -23,6 +23,7 @@ def add_recipe_to_db(href_list, category, headers):
             return soup.select(identifier)[0].getText()
         return ""
 
+# possible mods for absrtation between blogs
     def get_scraped_arrays(source, list_type, soup):
         html = soup.select(f"{source} > {list_type} > li")
         final_array = []
@@ -36,16 +37,15 @@ def add_recipe_to_db(href_list, category, headers):
     for url in href_list:
         res = requests.get(url, headers=headers)
         soup = bs(res.text, 'html.parser')
-        # main recipe class ".tasty-recipes"
 
-        if soup.select('.tasty-recipes') is None:
+        if soup.select(website['selectors']['main_recipe_class']) is None:
             continue
 
         parsed_url = urlparse(url)
 
         author, create = models.BlogAuthor.objects.update_or_create(
-            name="sally\'s baking addiction",
-            website_link="https://sallysbakingaddiction.com/"
+            name=website['name'],
+            website_link=website['website_link'],
         )
 
         category, create = models.BlogCategory.objects.update_or_create(
@@ -53,36 +53,82 @@ def add_recipe_to_db(href_list, category, headers):
             author=author
         )
 
-        # if models.BlogRecipe.objects.filter(
-        # slug=parsed_url.path.replace("/", "")
-        # ).exists():
-        #     continue
-        # else:
         slug = parsed_url.path.replace("/", "")
 
-        recipe, create = models.BlogRecipe.objects.update_or_create(
-            title=get_text('.tasty-recipes-title', soup),
+        existing_recipe = models.BlogRecipe.objects.filter(
             author=author,
-            # categories=recipe.categories.set(category),
-            slug=slug,
-            link=url,
-            rating=0 if get_text(
-                ".rating-label > .average", soup
-                ) == "" else float(get_text(".rating-label > .average", soup)),
-            num_reviews=0 if get_text(
-                ".rating-label > .count", soup
-                ) == "" else get_text(".rating-label > .count", soup),
-            description=get_text(".tasty-recipes-description-body > p", soup),
-            prep_time=get_text(".tasty-recipes-prep-time", soup),
-            cook_time=get_text(".tasty-recipes-cook-time", soup),
-            total_time=get_text(".tasty-recipes-total-time", soup),
-            servings=get_text(".tasty-recipes-yield", soup),
-        )
+            slug=slug
+        ).first()
+
+        if existing_recipe:
+            existing_recipe.title = get_text(
+                website['selectors']['title'],
+                soup)
+            existing_recipe.slug = slug
+            existing_recipe.link = url
+            existing_recipe.rating = 0 if get_text(
+               website['selectors']['rating'],
+               soup
+                ) == "" else float(get_text(
+                    website['selectors']['rating'],
+                    soup))
+            existing_recipe.num_reviews = 0 if get_text(
+                website['selectors']['num_reviews'],
+                soup
+                ) == "" else get_text(
+                    website['selectors']['num_reviews'],
+                    soup)
+            existing_recipe.description = get_text(
+                website['selectors']['description'],
+                soup)
+            existing_recipe.prep_time = get_text(
+                website['selectors']['prep_time'],
+                soup)
+            existing_recipe.cook_time = get_text(
+                website['selectors']['cook_time'],
+                soup)
+            existing_recipe.total_time = get_text(
+                website['selectors']['total_time'],
+                soup)
+            existing_recipe.servings = get_text(
+                website['selectors']['servings'],
+                soup)
+            existing_recipe.save()
+            recipe = existing_recipe
+        else:
+            recipe, create = models.BlogRecipe.objects.update_or_create(
+                title=get_text(website['selectors']['title'], soup),
+                author=author,
+                slug=slug,
+                link=url,
+                rating=0 if get_text(
+                            website['selectors']['rating'], soup
+                            ) == "" else float(
+                                get_text(website['selectors']['rating'],
+                                         soup)),
+                num_reviews=0 if get_text(
+                    website['selectors']['num_reviews'], soup
+                    ) == "" else get_text(
+                        website['selectors']['num_reviews'], soup
+                        ),
+                description=get_text(website['selectors']['description'],
+                                     soup),
+                prep_time=get_text(website['selectors']['prep_time'],
+                                   soup),
+                cook_time=get_text(website['selectors']['cook_time'],
+                                   soup),
+                total_time=get_text(website['selectors']['total_time'],
+                                    soup),
+                servings=get_text(website['selectors']['servings'], soup)
+            )
+
         if category not in recipe.categories.all():
             recipe.categories.add(category)
 
         ingredients = get_scraped_arrays(
-            ".tasty-recipes-ingredients-body", "ul", soup
+            website['selectors']['ingredients']['class'],
+            website['selectors']['ingredients']['list_type'],
+            soup
             )
         for ingredient in ingredients:
             models.BlogIngredient.objects.update_or_create(
@@ -90,59 +136,74 @@ def add_recipe_to_db(href_list, category, headers):
                 ingredient=ingredient
             )
         instructions = get_scraped_arrays(
-            ".tasty-recipes-instructions-body", "ol", soup
+            website['selectors']['instructions']['class'],
+            website['selectors']['instructions']['list_type'],
+            soup
             )
         for instruction in instructions:
             models.BlogInstruction.objects.update_or_create(
                 recipe=recipe,
                 instruction=instruction
             )
-        notes = get_scraped_arrays(".tasty-recipes-notes-body", "ol", soup)
-        for note in notes:
-            models.BlogNote.objects.update_or_create(
-                recipe=recipe,
-                note=note
-            )
 
-        images = []
+        if website['selectors']['notes']["class"] != "":
+            notes = get_scraped_arrays(
+                website['selectors']['notes']['class'],
+                website['selectors']['notes']['list_type'],
+                soup
+                )
+            for note in notes:
+                models.BlogNote.objects.update_or_create(
+                    recipe=recipe,
+                    note=note
+                )
 
-        img_html = soup.select(".type-post > .entry-content img")
-        for img in img_html:
-            img_src = img.get('src')
-            if img_src[:5] == "https":
-                images.append(img.get('src'))
+        existing_image = models.BlogImage.objects.filter(
+                    recipe=recipe,
+                    image_url__isnull=False
+                ).first()
 
-        for image_url in images:
-            # Download the image from the URL
-            response = requests.get(image_url, headers=headers)
+        if not existing_image:
+            images = []
 
-            # Try to open the image with PIL
-            image = Image.open(BytesIO(response.content))
+            img_html = soup.select(website['selectors']['img_html'])
+            for img in img_html:
+                img_src = img.get('src')
+                if img_src[:5] == "https":
+                    images.append(img.get('src'))
 
-            if image.mode != 'RGB':
-                image = image.convert('RGB')
+            for image_url in images:
+                # Download the image from the URL
+                response = requests.get(image_url, headers=headers)
 
-            # Generate a unique filename
-            ext = os.path.splitext(image_url.split("/")[-1])[1]
-            filename = f'{uuid.uuid4()}{ext}'
+                # Try to open the image with PIL
+                image = Image.open(BytesIO(response.content))
 
-            # Create an InMemoryUploadedFile from the downloaded image
-            image_io = BytesIO()
-            image.save(image_io, format='JPEG')
+                if image.mode != 'RGB':
+                    image = image.convert('RGB')
 
-            uploaded_image = InMemoryUploadedFile(
-                image_io,  # file
-                None,  # field_name
-                filename,  # file name
-                'image/jpeg',  # content_type
-                image_io.tell,  # size
-                None  # content_type_extra
-            )
+                # Generate a unique filename
+                ext = os.path.splitext(image_url.split("/")[-1])[1]
+                filename = f'{uuid.uuid4()}{ext}'
 
-            # Update or create the BlogImage instance with the uploaded image
-            models.BlogImage.objects.update_or_create(
-                recipe=recipe,
-                image_url=uploaded_image
-            )
+                # Create an InMemoryUploadedFile from the downloaded image
+                image_io = BytesIO()
+                image.save(image_io, format='JPEG')
+
+                uploaded_image = InMemoryUploadedFile(
+                    image_io,  # file
+                    None,  # field_name
+                    filename,  # file name
+                    'image/jpeg',  # content_type
+                    image_io.tell,  # size
+                    None  # content_type_extra
+                )
+
+                # Update or create the BlogImage instance
+                # with the uploaded image
+                models.BlogImage.objects.update_or_create(
+                    recipe=recipe,
+                    image_url=uploaded_image
+                )
 
     print(f"Data collected!({len(href_list)} recipes added to db)")

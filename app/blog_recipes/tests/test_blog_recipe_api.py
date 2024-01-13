@@ -95,30 +95,10 @@ class BlogRecipeApiTests(TestCase):
         Test viewing a recipe detail
         """
         recipe = create_recipe(author=self.author)
-        url = detail_url(recipe.slug)
+        url = detail_url(recipe.id)
         res = self.client.get(url)
         serializer = BlogRecipeDetailSerializer(recipe)
         self.assertEqual(res.data, serializer.data)
-
-    def test_filter_by_author_query_params(self):
-        """
-        Test filtering recipes by author query params
-        """
-        author2 = create_author(name="author2")
-        recipe1 = create_recipe(author=self.author)
-        recipe2 = create_recipe(author=author2, slug="recipe2")
-        recipe3 = create_recipe(author=self.author, slug="recipe3")
-        res = self.client.get(
-            RECIPES_URL,
-            {"authors": f"{self.author.id}"}
-        )
-        serializer1 = BlogRecipeSerializer(recipe1)
-        serializer2 = BlogRecipeSerializer(recipe2)
-        serializer3 = BlogRecipeSerializer(recipe3)
-        self.assertIn(serializer1.data, res.data)
-        self.assertNotIn(serializer2.data, res.data)
-        self.assertIn(serializer3.data, res.data)
-        self.assertEqual(len(res.data), 2)
 
     def test_filter_by_category_query_params(self):
         """

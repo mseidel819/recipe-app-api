@@ -13,6 +13,16 @@ from core.models import (
     BlogNote
 )
 
+import json
+
+with open(
+    'core/management/commands/utils/blog_data.json',
+    'r', encoding="utf-8"
+      ) as file:
+    data = json.load(file)
+
+website = data['sallys-baking-addiction']
+
 
 URL = "https://sallysbakingaddiction.com/category/bread/"
 HEADERS = {
@@ -31,7 +41,7 @@ class ScrapeTests(TestCase):
         Test that urls are returned
         """
 
-        href_list = get_urls(URL, HEADERS)
+        href_list = get_urls(URL, HEADERS, website)
         self.assertTrue(href_list)
         for url in href_list:
             self.assertTrue(
@@ -43,8 +53,8 @@ class ScrapeTests(TestCase):
         Test that recipes are added to the database
         """
 
-        href_list = get_urls(URL, HEADERS)
-        add_recipe_to_db(href_list[:2], "bread", HEADERS)
+        href_list = get_urls(URL, HEADERS, website)
+        add_recipe_to_db(href_list[:2], "bread", HEADERS, website)
         self.assertTrue(href_list)
 
         recipes = BlogRecipe.objects.all()
@@ -60,7 +70,7 @@ class ScrapeTests(TestCase):
             self.assertTrue(recipe.link)
             self.assertGreaterEqual(recipe.rating, 0)
             self.assertGreaterEqual(recipe.num_reviews, 0)
-            self.assertEqual(recipe.author.name, "sally\'s baking addiction")
+            self.assertEqual(recipe.author.name, "Sally\'s Baking Addiction")
 
         for ingredient in ingredients:
             self.assertTrue(ingredient.ingredient)
@@ -79,13 +89,13 @@ class ScrapeTests(TestCase):
         Test that recipes are updated in the database
         """
 
-        href_list = get_urls(URL, HEADERS)
-        add_recipe_to_db(href_list[:2], "bread", HEADERS)
+        href_list = get_urls(URL, HEADERS, website)
+        add_recipe_to_db(href_list[:2], "bread", HEADERS, website)
         recipes1 = BlogRecipe.objects.all()
         ingredients1 = BlogIngredient.objects.all()
         instructions1 = BlogInstruction.objects.all()
         notes1 = BlogNote.objects.all()
-        add_recipe_to_db(href_list[:2], "bread", HEADERS)
+        add_recipe_to_db(href_list[:2], "bread", HEADERS, website)
         self.assertTrue(href_list)
 
         recipes2 = BlogRecipe.objects.all()
@@ -101,7 +111,7 @@ class ScrapeTests(TestCase):
             self.assertTrue(recipe.link)
             self.assertGreaterEqual(recipe.rating, 0)
             self.assertGreaterEqual(recipe.num_reviews, 0)
-            self.assertEqual(recipe.author.name, "sally\'s baking addiction")
+            self.assertEqual(recipe.author.name, "Sally\'s Baking Addiction")
 
         for ingredient in ingredients1:
             self.assertTrue(ingredient.ingredient)

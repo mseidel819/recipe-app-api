@@ -144,7 +144,7 @@ class BlogRecipe(models.Model):
         on_delete=models.CASCADE
     )
     categories = models.ManyToManyField('BlogCategory')
-    slug = models.SlugField(unique=True, blank=True, max_length=100)
+    slug = models.SlugField(blank=True, max_length=100)
     link = models.CharField(max_length=255, blank=True)
     rating = models.FloatField()
     num_reviews = models.IntegerField()

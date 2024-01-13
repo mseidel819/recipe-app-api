@@ -7,30 +7,36 @@ from core.management.commands.utils.add_to_db import add_recipe_to_db
 
 from django.core.management.base import BaseCommand
 
+import json
+
+with open(
+    'core/management/commands/utils/blog_data.json',
+    'r', encoding="utf-8"
+      ) as file:
+    data = json.load(file)
+
 
 class Command(BaseCommand):
     """
     Django command to populate db with
     recipes from Sally's Baking Addiction
     """
+    def add_arguments(self, parser):
+        # Define the command line arguments
+        parser.add_argument('website', nargs='+', type=str)
+
     def handle(self, *args, **options):
         """Handle the command"""
-        categories = [
-                    'bread',
-                    "breakfast-treats",
-                    "desserts/cakes",
-                    "desserts/cookies",
-                    "desserts/pies"
-                    ]
+        website = data[options['website'][0]]
 
         HEADERS = {'User-Agent': 'Mozilla/5.0 (iPad; CPU OS 12_2 like Mac OS X)\
                 AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148'}
 
-        for category in categories:
+        for category in website['categories']:
             cleaned_filename = category.replace("/", "-")
-            url = f'https://sallysbakingaddiction.com/category/{category}/'
-            href_list = get_urls(url, HEADERS)
-            add_recipe_to_db(href_list, cleaned_filename, HEADERS)
+            url = f'{website["category_entry_url"]}{category}/'
+            href_list = get_urls(url, HEADERS, website)
+            add_recipe_to_db(href_list, cleaned_filename, HEADERS, website)
             print(f'recipes successfully compiled for {category}!')
 
         print('Complete!')
