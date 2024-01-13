@@ -9,11 +9,7 @@ from rest_framework.test import APIClient
 
 from core.models import (
     BlogRecipe,
-    # BlogIngredient,
-    # BlogNote,
-    # BlogInstruction,
     BlogAuthor,
-    # BlogImage,
     BlogCategory,
 )
 

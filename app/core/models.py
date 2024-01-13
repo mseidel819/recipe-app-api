@@ -153,7 +153,6 @@ class BlogRecipe(models.Model):
     cook_time = models.CharField(max_length=255)
     total_time = models.CharField(max_length=255)
     servings = models.CharField(max_length=255)
-    # image = models.ImageField(null=True, upload_to=recipe_image_file_path)
 
     def save(self, *args, **kwargs):
         """saves the slug and adds one, if not provided"""

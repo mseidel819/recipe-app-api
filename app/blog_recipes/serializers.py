@@ -41,8 +41,6 @@ class BlogInstructionSerializer(serializers.ModelSerializer):
 
 class BlogCategorySerializer(serializers.ModelSerializer):
     """Serializer for category object"""
-    # recipes = BlogRecipeSerializer(many=True, read_only=True)
-
     class Meta:
         """Meta class"""
         model = BlogCategory
@@ -52,13 +50,13 @@ class BlogCategorySerializer(serializers.ModelSerializer):
 
 class BlogAuthorSerializer(serializers.ModelSerializer):
     """Serializer for author object"""
-    # recipes = BlogRecipeSerializer(many=True, read_only=True)
     categories = serializers.SerializerMethodField()
+    total_recipes = serializers.SerializerMethodField()
 
     class Meta:
         """Meta class"""
         model = BlogAuthor
-        fields = ('id', 'name', 'website_link', 'categories')
+        fields = ('id', 'name', 'website_link', "total_recipes", 'categories')
         read_only_fields = ('id',)
 
     def get_categories(self, obj):
@@ -66,6 +64,11 @@ class BlogAuthorSerializer(serializers.ModelSerializer):
         ordered_categories = obj.categories.order_by('id')
         return [category['name']
                 for category in ordered_categories.values()]
+
+    def get_total_recipes(self, obj):
+        """Get the total number of recipes by the author"""
+        return obj.recipes.count()
+
 
 
 class BlogRecipeImageSerializer(serializers.ModelSerializer):
@@ -96,37 +99,6 @@ class BlogRecipeSerializer(serializers.ModelSerializer):
         """orders ingredients by id to preserve original order"""
         return obj.author.name
 
-    # def _get_or_create_categories(self, categories, recipe):
-    #     """handle getting or creating ingredients"""
-    #     for category in categories:
-    #         cat_obj, create = BlogCategory.objects.get_or_create(
-    #             author=recipe.author,
-    #             **category
-    #         )
-    #         recipe.categories.add(cat_obj)
-
-    # def create(self, validated_data):
-    #     """Create a recipe"""
-    #     categories = validated_data.pop('categories', [])
-    #     recipe = BlogRecipe.objects.create(**validated_data)
-    #     self._get_or_create_categories(categories, recipe)
-
-    #     return recipe
-
-    # def update(self, instance, validated_data):
-    #     """Update a recipe"""
-
-    #     categories = validated_data.pop('categories', [])
-    #     if categories is not None:
-    #         instance.categories.clear()
-    #         self._get_or_create_categories(categories, instance)
-
-    #     for key, value in validated_data.items():
-    #         setattr(instance, key, value)
-
-    #     instance.save()
-    #     return instance
-
     def get_categories(self, obj):
         """orders categories by id to preserve original order"""
         ordered_categories = obj.categories.order_by('id')
@@ -141,7 +113,6 @@ class BlogRecipeDetailSerializer(BlogRecipeSerializer):
     ingredients = serializers.SerializerMethodField()
     instructions = serializers.SerializerMethodField()
     notes = serializers.SerializerMethodField()
-    # images = serializers.SerializerMethodField()
     images = BlogRecipeImageSerializer(many=True, read_only=True)
 
     class Meta(BlogRecipeSerializer.Meta):
