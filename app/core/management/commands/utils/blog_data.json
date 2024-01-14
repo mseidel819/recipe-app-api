@@ -3,8 +3,9 @@
     "name": "Sally's Baking Addiction",
     "website_link": "https://sallysbakingaddiction.com/",
     "category_entry_url": "https://sallysbakingaddiction.com/category/",
-    "categories": [
-      "desserts/pies",
+    "categories": ["desserts/pies"],
+    "comment_categories": [
+      "desserts/pies-crisps-tarts",
       "bread",
       "breakfast-treats",
       "desserts/cakes",

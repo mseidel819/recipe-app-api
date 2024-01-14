@@ -173,19 +173,35 @@ class BlogImage(models.Model):
         related_name='images',
         on_delete=models.CASCADE
     )
+    name = models.CharField(max_length=255)
     image_url = models.ImageField(null=True,
                                   upload_to=blog_recipe_image_file_path)
 
     def __str__(self):
-        return self.image
+        return self.name
+
+
+class BlogIngredientList(models.Model):
+    """
+    Ingredient list object
+    """
+    recipe = models.ForeignKey(
+        BlogRecipe,
+        related_name='ingredient_list',
+        on_delete=models.CASCADE
+    )
+    title = models.TextField()
+
+    def __str__(self):
+        return self.ingredient_list
 
 
 class BlogIngredient(models.Model):
     """
     Ingredient object
     """
-    recipe = models.ForeignKey(
-        BlogRecipe,
+    ingredient_list = models.ForeignKey(
+        BlogIngredientList,
         related_name='ingredients',
         on_delete=models.CASCADE
     )

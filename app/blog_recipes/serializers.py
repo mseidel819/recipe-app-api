@@ -1,7 +1,6 @@
 """
 serializers for blog recipeapi
 """
-
 from rest_framework import serializers
 
 from core.models import (
@@ -12,6 +11,7 @@ from core.models import (
     BlogAuthor,
     BlogImage,
     BlogCategory,
+    BlogIngredientList,
 )
 
 
@@ -21,6 +21,22 @@ class BlogIngredientSerializer(serializers.ModelSerializer):
         """Meta class"""
         model = BlogIngredient
         fields = ('ingredient',)
+
+
+class BlogIngredientListSerializer(serializers.ModelSerializer):
+    """Serializer for ingredient list object"""
+    ingredients = serializers.SerializerMethodField()
+
+    class Meta:
+        """Meta class"""
+        model = BlogIngredientList
+        fields = ('title', 'ingredients')
+
+    def get_ingredients(self, obj):
+        """orders ingredients by id to preserve original order"""
+        ordered_ingredients = obj.ingredients.order_by('id')
+        return [ingredient['ingredient']
+                for ingredient in ordered_ingredients.values()]
 
 
 class BlogNoteSerializer(serializers.ModelSerializer):
@@ -77,7 +93,7 @@ class BlogRecipeImageSerializer(serializers.ModelSerializer):
     class Meta:
         """Meta class"""
         model = BlogImage
-        fields = ("image_url",)
+        fields = ("image_url", "name")
         read_only_fields = ("id",)
 
 
@@ -85,17 +101,19 @@ class BlogRecipeSerializer(serializers.ModelSerializer):
     """Serializer for recipes"""
     author = serializers.SerializerMethodField()
     categories = serializers.SerializerMethodField()
+    main_image = serializers.SerializerMethodField()
 
     class Meta:
         """Meta class"""
         model = BlogRecipe
         fields = (
-            "id", "title", "categories", "link", "rating", "author", "slug",
+            "id", "title", "categories", "link",
+            "rating", "author", "slug", "main_image"
         )
         read_only_fields = ('id',)
 
     def get_author(self, obj):
-        """orders ingredients by id to preserve original order"""
+        """gets author name only"""
         return obj.author.name
 
     def get_categories(self, obj):
@@ -104,12 +122,27 @@ class BlogRecipeSerializer(serializers.ModelSerializer):
         return [category['name']
                 for category in ordered_categories.values()]
 
+    def get_main_image(self, obj):  # Add this method
+        """Return only the first image"""
+        images = obj.images
+        request = self.context.get('request')
+        # get the host name
+        host = request.build_absolute_uri() \
+            .split('/')[0] + '//' + \
+            request.build_absolute_uri().split('/')[2]
+        if images.exists():
+            first_image = images.last().image_url.url
+            print(host + first_image)
+            return host + first_image
+        else:
+            return None
+
 
 class BlogRecipeDetailSerializer(BlogRecipeSerializer):
     """
     Serializer for recipe detail object
     """
-    ingredients = serializers.SerializerMethodField()
+    ingredient_list = BlogIngredientListSerializer(many=True, read_only=True)
     instructions = serializers.SerializerMethodField()
     notes = serializers.SerializerMethodField()
     images = BlogRecipeImageSerializer(many=True, read_only=True)
@@ -119,15 +152,9 @@ class BlogRecipeDetailSerializer(BlogRecipeSerializer):
         fields = BlogRecipeSerializer.Meta.fields + (
             "description", "num_reviews", "prep_time", "cook_time",
             "total_time", "servings", "images",
-            "ingredients", "instructions", "notes"
+            "ingredient_list", "instructions", "notes"
         )
         read_only_fields = ('id',)
-
-    def get_ingredients(self, obj):
-        """orders ingredients by id to preserve original order"""
-        ordered_ingredients = obj.ingredients.order_by('id')
-        return [ingredient['ingredient']
-                for ingredient in ordered_ingredients.values()]
 
     def get_instructions(self, obj):
         """orders instructions by id to preserve original order"""

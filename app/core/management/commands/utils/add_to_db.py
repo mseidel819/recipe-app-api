@@ -125,16 +125,45 @@ def add_recipe_to_db(href_list, category, headers, website):
         if category not in recipe.categories.all():
             recipe.categories.add(category)
 
-        ingredients = get_scraped_arrays(
-            website['selectors']['ingredients']['class'],
-            website['selectors']['ingredients']['list_type'],
-            soup
+        # messing with ingredient sections
+        ingredient_sections = soup.select(
+            website['selectors']['ingredients']['class'])[0]
+
+        def map_get_text(sections):
+            return [section.getText() for section in sections[0]]
+
+        ing_section_titles = []
+        if ingredient_sections.select("h4"):
+            ing_section_titles = map_get_text(
+                [ingredient_sections.select("h4")]
+                )
+        else:
+            ing_section_titles = [""]
+
+        ing_section_lists = []
+        if ingredient_sections.select("ul"):
+            for ul in ingredient_sections.select("ul"):
+                li_arr = []
+                for li in ul.select("li"):
+                    li_arr.append(li.getText())
+                ing_section_lists.append(li_arr)
+
+        zipped_ingredient_titles_and_sections = zip(
+            ing_section_titles, ing_section_lists
             )
-        for ingredient in ingredients:
-            models.BlogIngredient.objects.update_or_create(
+
+        for title, ingredients in zipped_ingredient_titles_and_sections:
+            ing_list, create = models.BlogIngredientList\
+             .objects.update_or_create(
                 recipe=recipe,
-                ingredient=ingredient
-            )
+                title=title
+             )
+            for ingredient in ingredients:
+                models.BlogIngredient.objects.update_or_create(
+                    ingredient_list=ing_list,
+                    ingredient=ingredient
+                )
+
         instructions = get_scraped_arrays(
             website['selectors']['instructions']['class'],
             website['selectors']['instructions']['list_type'],
@@ -184,6 +213,7 @@ def add_recipe_to_db(href_list, category, headers, website):
 
                 # Generate a unique filename
                 ext = os.path.splitext(image_url.split("/")[-1])[1]
+                old_name = os.path.splitext(image_url.split("/")[-1])[0]
                 filename = f'{uuid.uuid4()}{ext}'
 
                 # Create an InMemoryUploadedFile from the downloaded image
@@ -203,7 +233,8 @@ def add_recipe_to_db(href_list, category, headers, website):
                 # with the uploaded image
                 models.BlogImage.objects.update_or_create(
                     recipe=recipe,
-                    image_url=uploaded_image
+                    image_url=uploaded_image,
+                    name=old_name
                 )
 
     print(f"Data collected!({len(href_list)} recipes added to db)")
