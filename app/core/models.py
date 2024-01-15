@@ -193,7 +193,7 @@ class BlogIngredientList(models.Model):
     title = models.TextField()
 
     def __str__(self):
-        return self.ingredient_list
+        return self.title
 
 
 class BlogIngredient(models.Model):

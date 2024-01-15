@@ -74,7 +74,7 @@ class ScrapeTests(TestCase):
 
         for ingredient in ingredients:
             self.assertTrue(ingredient.ingredient)
-            self.assertTrue(ingredient.recipe)
+            self.assertTrue(ingredient.ingredient_list)
 
         for instruction in instructions:
             self.assertTrue(instruction.instruction)
@@ -115,7 +115,7 @@ class ScrapeTests(TestCase):
 
         for ingredient in ingredients1:
             self.assertTrue(ingredient.ingredient)
-            self.assertTrue(ingredient.recipe)
+            self.assertTrue(ingredient.ingredient_list)
 
         for instruction in instructions1:
             self.assertTrue(instruction.instruction)

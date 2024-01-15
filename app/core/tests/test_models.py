@@ -163,13 +163,20 @@ class ModelTests(TestCase):
             description="I was never a fan of cornbread until this recipe!"
         )
 
+        ingredient_list = models.BlogIngredientList.objects.create(
+            recipe=recipe,
+            title="crust"
+        )
+
         ingredient = models.BlogIngredient.objects.create(
             ingredient="1 cup (240ml) whole milk, at room temperature",
-            recipe=recipe
+            ingredient_list=ingredient_list
         )
         self.assertEqual(
             str(ingredient), '1 cup (240ml) whole milk, at room temperature'
             )
+        self.assertEqual(str(ingredient_list), 'crust')
+        self.assertIn(ingredient, ingredient_list.ingredients.all())
 
     def test_create_blog_instruction(self):
         """

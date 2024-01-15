@@ -1,7 +1,7 @@
 """
 tests for recipe api
 """
-from django.test import TestCase
+from django.test import TestCase, RequestFactory
 from django.urls import reverse
 
 from rest_framework import status
@@ -11,6 +11,7 @@ from core.models import (
     BlogRecipe,
     BlogAuthor,
     BlogCategory,
+    BlogImage
 )
 
 from blog_recipes.serializers import (
@@ -45,10 +46,25 @@ def create_recipe(author, **params):
         "cook_time": "25 minutes",
         "total_time": "4 hours",
         "servings": "serves 12-16",
-        "description": "This is my favorite homemade chocolate cake recipe."
+        "description": "This is my favorite homemade chocolate cake recipe.",
     }
     defaults.update(params)
-    return BlogRecipe.objects.create(**defaults)
+
+    recipe = BlogRecipe.objects.create(**defaults)
+
+    # Create related BlogImage instances (customize as needed)
+    BlogImage.objects.create(
+        recipe=recipe,
+        image_url="https://example.com/image1.jpg",
+        name="Image 1"
+    )
+    BlogImage.objects.create(
+        recipe=recipe,
+        image_url="https://example.com/image2.jpg",
+        name="Image 2"
+    )
+
+    return recipe
 
 
 def create_author(**params):
@@ -70,6 +86,7 @@ class BlogRecipeApiTests(TestCase):
     def setUp(self):
         self.client = APIClient()
         self.author = create_author()
+        self.factory = RequestFactory()
 
     def test_retrieve_recipes(self):
         """
@@ -80,10 +97,15 @@ class BlogRecipeApiTests(TestCase):
             title="cake2",
             author=self.author,
             slug="chocolate-cake-2")
+
+        request = self.factory.get(
+            reverse("blog-recipes:blogrecipe-list", args=[self.author.id]))
+
         res = self.client.get(
             reverse("blog-recipes:blogrecipe-list", args=[self.author.id]))
         recipes = BlogRecipe.objects.all().order_by("id")
-        serializer = BlogRecipeSerializer(recipes, many=True)
+        serializer = BlogRecipeSerializer(
+            recipes, many=True, context={'request': request})
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(res.data, serializer.data)
 
@@ -92,9 +114,19 @@ class BlogRecipeApiTests(TestCase):
         Test viewing a recipe detail
         """
         recipe = create_recipe(author=self.author)
+
+        BlogImage.objects.create(
+            recipe=recipe,
+            image_url="https://sallysbakingaddiction.com/wp-content/\
+                uploads/2017/12/homemade-strawberry-cake-3.jpg",
+            name="moist-chocolate-layer-cake"
+        )
+
         url = detail_url(recipe.id)
+        request = self.factory.get(url)
         res = self.client.get(url)
-        serializer = BlogRecipeDetailSerializer(recipe)
+        serializer = BlogRecipeDetailSerializer(
+            recipe, context={'request': request})
         self.assertEqual(res.data, serializer.data)
 
     def test_filter_by_category_query_params(self):
@@ -132,13 +164,19 @@ class BlogRecipeApiTests(TestCase):
             slug="recipe3",
         )
         recipe3.categories.add(cake)
+
+        request = self.factory.get(
+            reverse("blog-recipes:blogrecipe-list", args=[self.author.id]))
         res = self.client.get(
             reverse("blog-recipes:blogrecipe-list", args=[self.author.id]),
             {"categories": "cookies"}
         )
-        serializer1 = BlogRecipeSerializer(recipe1)
-        serializer2 = BlogRecipeSerializer(recipe2)
-        serializer3 = BlogRecipeSerializer(recipe3)
+        serializer1 = BlogRecipeSerializer(
+            recipe1, context={'request': request})
+        serializer2 = BlogRecipeSerializer(
+            recipe2, context={'request': request})
+        serializer3 = BlogRecipeSerializer(
+            recipe3, context={'request': request})
         self.assertIn(serializer1.data, res.data)
         self.assertIn(serializer2.data, res.data)
         self.assertNotIn(serializer3.data, res.data)
