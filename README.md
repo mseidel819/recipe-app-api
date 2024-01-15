@@ -8,6 +8,8 @@ There are two setions of this project. both require user authentication by creat
 
 ## app/blog_recipes
 
+### Authentication
+
 1. In order to authorize, send a POST request to /api/user/token/ and add your username and a password in the body of the request. This will return a token that you can use to access the API.
 2. Click the Authorize button in the top right corner of the docs page and add the token to the 'tokenAuth' section in the following format: Token PUT_TOKEN_HERE
 
