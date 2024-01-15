@@ -3,7 +3,7 @@
     "name": "Sally's Baking Addiction",
     "website_link": "https://sallysbakingaddiction.com/",
     "category_entry_url": "https://sallysbakingaddiction.com/category/",
-    "categories": ["cookies"],
+    "categories": ["cookies", "bread"],
     "categoriesss": [
       "desserts/pies-crisps-tarts",
       "bread",
@@ -46,7 +46,7 @@
     "name": "Budjet Bytes",
     "website_link": "https://www.budgetbytes.com/",
     "category_entry_url": "https://www.budgetbytes.com/category/recipes/",
-    "categories": ["appetizers"],
+    "categories": ["appetizers", "bread"],
     "categoriesss": [
       "appetizers",
       "beansandgrains",
