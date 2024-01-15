@@ -3,9 +3,11 @@ tests for recipe api
 """
 from django.test import TestCase, RequestFactory
 from django.urls import reverse
+from django.contrib.auth import get_user_model
 
 from rest_framework import status
 from rest_framework.test import APIClient
+
 
 from core.models import (
     BlogRecipe,
@@ -28,6 +30,13 @@ def detail_url(recipe_slug):
     Return recipe detail url
     """
     return reverse("blog-recipes:blogrecipe-detail", args=[0, recipe_slug])
+
+
+def create_user(**params):
+    """
+    Helper function to create a user
+    """
+    return get_user_model().objects.create_user(**params)
 
 
 def create_recipe(author, **params):
@@ -85,8 +94,13 @@ class BlogRecipeApiTests(TestCase):
     """
     def setUp(self):
         self.client = APIClient()
+        self.user = create_user(
+            email="test@example.com",
+            password="test123"
+        )
         self.author = create_author()
         self.factory = RequestFactory()
+        self.client.force_authenticate(self.user)
 
     def test_retrieve_recipes(self):
         """

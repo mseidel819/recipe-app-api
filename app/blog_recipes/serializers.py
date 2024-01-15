@@ -131,7 +131,7 @@ class BlogRecipeSerializer(serializers.ModelSerializer):
             .split('/')[0] + '//' + \
             request.build_absolute_uri().split('/')[2]
         if images.exists():
-            first_image = images.last().image_url.url
+            first_image = images.first().image_url.url
             return host + first_image
         else:
             return None

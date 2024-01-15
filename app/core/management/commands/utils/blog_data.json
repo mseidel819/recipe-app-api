@@ -3,8 +3,8 @@
     "name": "Sally's Baking Addiction",
     "website_link": "https://sallysbakingaddiction.com/",
     "category_entry_url": "https://sallysbakingaddiction.com/category/",
-    "categories": ["desserts/pies-crisps-tarts"],
-    "comment_categories": [
+    "categories": ["cookies"],
+    "categoriesss": [
       "desserts/pies-crisps-tarts",
       "bread",
       "breakfast-treats",
@@ -42,12 +42,12 @@
       "img_html": ".type-post > .entry-content img"
     }
   },
-  "budjet-bytes": {
+  "budget-bytes": {
     "name": "Budjet Bytes",
     "website_link": "https://www.budgetbytes.com/",
     "category_entry_url": "https://www.budgetbytes.com/category/recipes/",
     "categories": ["appetizers"],
-    "categoriesww": [
+    "categoriesss": [
       "appetizers",
       "beansandgrains",
       "bowl-meals",
@@ -112,7 +112,7 @@
         "list_type": "span",
         "is_list_item": false
       },
-      "img_html": ".type-post > .entry-content img"
+      "img_html": ".type-post > .entry-content img:not(.block-callout img)"
     }
   }
 }

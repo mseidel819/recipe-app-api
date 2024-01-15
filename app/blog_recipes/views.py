@@ -9,8 +9,8 @@ from drf_spectacular.utils import (
 )
 
 from rest_framework import viewsets, mixins
-# from rest_framework.authentication import TokenAuthentication
-# from rest_framework.permissions import IsAuthenticated
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from core.models import (
@@ -62,8 +62,8 @@ class BlogRecipeByAuthorViewSet(
     serializer_class = serializers.BlogRecipeDetailSerializer
     queryset = BlogRecipe.objects.all()
     lookup_field = "id"
-    # authentication_classes = (TokenAuthentication,)
-    # permission_classes = (IsAuthenticated,)
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
 
     def get_queryset(self, *args, **kwargs):
         """
