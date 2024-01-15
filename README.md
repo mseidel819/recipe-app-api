@@ -8,6 +8,9 @@ There are two setions of this project. both require user authentication by creat
 
 ## app/blog_recipes
 
+1. In order to authorize, send a POST request to /api/user/token/ and add your username and a password in the body of the request. This will return a token that you can use to access the API.
+2. Click the Authorize button in the top right corner of the docs page and add the token to the 'tokenAuth' section in the following format: Token PUT_TOKEN_HERE
+
 - The /app/blog_recipes API is a recipe storage system that scrapes recipes from my most used food blogs.
 - Allows the user to see all of the recipes collected from specific food blogs. Users are only allowed to GET recipes from this API.
 - /api/blog-recipes/authors/ does not require authentication and returns a list of all of the authors that have recipes in the database.
@@ -32,7 +35,9 @@ There are two setions of this project. both require user authentication by creat
 In order to refresh the recipe DB within the docker env, run the following command:
 
 ```
+
 docker-compose run --rm app sh -c "python manage.py scrape [blog_name]"
+
 ```
 
 A list of blogs to scrape are:
@@ -41,3 +46,7 @@ A list of blogs to scrape are:
 - budjet-bytes
 
 These are updated in core/management/commands/utils/blog_data.json
+
+```
+
+```
