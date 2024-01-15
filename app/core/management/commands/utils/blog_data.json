@@ -3,7 +3,7 @@
     "name": "Sally's Baking Addiction",
     "website_link": "https://sallysbakingaddiction.com/",
     "category_entry_url": "https://sallysbakingaddiction.com/category/",
-    "categories": ["desserts/pies"],
+    "categories": ["desserts/pies-crisps-tarts"],
     "comment_categories": [
       "desserts/pies-crisps-tarts",
       "bread",
@@ -25,15 +25,19 @@
       "servings": ".tasty-recipes-yield",
       "ingredients": {
         "class": ".tasty-recipes-ingredients-body",
-        "list_type": "ul"
+        "list_type": "ul",
+        "section_title": "h4",
+        "is_list_item": true
       },
       "instructions": {
         "class": ".tasty-recipes-instructions-body",
-        "list_type": "ol"
+        "list_type": "ol",
+        "is_list_item": true
       },
       "notes": {
         "class": ".tasty-recipes-notes-body",
-        "list_type": "ol"
+        "list_type": "ol",
+        "is_list_item": true
       },
       "img_html": ".type-post > .entry-content img"
     }
@@ -42,7 +46,8 @@
     "name": "Budjet Bytes",
     "website_link": "https://www.budgetbytes.com/",
     "category_entry_url": "https://www.budgetbytes.com/category/recipes/",
-    "categories": [
+    "categories": ["appetizers"],
+    "categoriesww": [
       "appetizers",
       "beansandgrains",
       "bowl-meals",
@@ -93,15 +98,19 @@
       "servings": ".wprm-recipe-servings",
       "ingredients": {
         "class": ".wprm-recipe-ingredient-group",
-        "list_type": "ul"
+        "list_type": "ul",
+        "section_title": "h4",
+        "is_list_item": true
       },
       "instructions": {
         "class": ".wprm-recipe-instruction-group",
-        "list_type": "ul"
+        "list_type": "ul",
+        "is_list_item": true
       },
       "notes": {
-        "class": "",
-        "list_type": ""
+        "class": "wprm-recipe-notes",
+        "list_type": "span",
+        "is_list_item": false
       },
       "img_html": ".type-post > .entry-content img"
     }

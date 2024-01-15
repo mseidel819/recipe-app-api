@@ -24,8 +24,11 @@ def add_recipe_to_db(href_list, category, headers, website):
         return ""
 
 # possible mods for absrtation between blogs
-    def get_scraped_arrays(source, list_type, soup):
-        html = soup.select(f"{source} > {list_type} > li")
+    def get_scraped_arrays(source, list_type, soup, li=True):
+        if li:
+            html = soup.select(f"{source} > {list_type} > li")
+        else:
+            html = soup.select(f"{source} > {list_type}")
         final_array = []
         for item in html:
             final_array.append(item.getText())
@@ -37,8 +40,10 @@ def add_recipe_to_db(href_list, category, headers, website):
     for url in href_list:
         res = requests.get(url, headers=headers)
         soup = bs(res.text, 'html.parser')
-
-        if soup.select(website['selectors']['main_recipe_class']) is None:
+        if soup.select(
+            website['selectors']['main_recipe_class']) is None or (
+                len(soup.select(
+                 website['selectors']['main_recipe_class'])) == 0):
             continue
 
         parsed_url = urlparse(url)
@@ -126,23 +131,37 @@ def add_recipe_to_db(href_list, category, headers, website):
             recipe.categories.add(category)
 
         # messing with ingredient sections
-        ingredient_sections = soup.select(
-            website['selectors']['ingredients']['class'])[0]
+            # check a ResultSet type
+        if isinstance(soup.select(
+                    website['selectors']['ingredients']['class']), list):
+            ingredient_sections = soup.select(
+             website['selectors']['ingredients']['class'])[0]
+        else:
+            ingredient_sections = soup.select(
+                website['selectors']['ingredients']['class'])
 
         def map_get_text(sections):
             return [section.getText() for section in sections[0]]
 
         ing_section_titles = []
-        if ingredient_sections.select("h4"):
+        if ingredient_sections.select(
+             website['selectors']['ingredients']['section_title']
+             ):
             ing_section_titles = map_get_text(
-                [ingredient_sections.select("h4")]
+                [ingredient_sections.select(
+                    website['selectors']['ingredients']['section_title']
+                    )]
                 )
         else:
             ing_section_titles = [""]
 
         ing_section_lists = []
-        if ingredient_sections.select("ul"):
-            for ul in ingredient_sections.select("ul"):
+        if ingredient_sections.select(
+            website['selectors']['ingredients']['list_type']
+             ):
+            for ul in ingredient_sections.select(
+                        website['selectors']['ingredients']['list_type']
+                        ):
                 li_arr = []
                 for li in ul.select("li"):
                     li_arr.append(li.getText())
@@ -167,7 +186,8 @@ def add_recipe_to_db(href_list, category, headers, website):
         instructions = get_scraped_arrays(
             website['selectors']['instructions']['class'],
             website['selectors']['instructions']['list_type'],
-            soup
+            soup,
+            website['selectors']['instructions']['is_list_item']
             )
         for instruction in instructions:
             models.BlogInstruction.objects.update_or_create(
@@ -179,7 +199,9 @@ def add_recipe_to_db(href_list, category, headers, website):
             notes = get_scraped_arrays(
                 website['selectors']['notes']['class'],
                 website['selectors']['notes']['list_type'],
-                soup
+                soup,
+                website['selectors']['instructions']['is_list_item']
+
                 )
             for note in notes:
                 models.BlogNote.objects.update_or_create(
