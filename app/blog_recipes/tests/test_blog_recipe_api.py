@@ -35,7 +35,7 @@ def create_recipe(author, **params):
     Helper function to create a recipe
     """
     defaults = {
-        "title": "Deliciously Moist Chocolate Layer Cake",
+        "title": "Deliciously Moist",
         "author": author,
         "slug": "triple-chocolate-layer-cake",
         "rating": 4.9,
@@ -117,8 +117,10 @@ class BlogRecipeApiTests(TestCase):
 
         BlogImage.objects.create(
             recipe=recipe,
-            image_url="https://sallysbakingaddiction.com/wp-content/\
-                uploads/2017/12/homemade-strawberry-cake-3.jpg",
+            image_url=(
+                "https://sallysbakingaddiction.com/wp-content/"
+                "uploads/2017/12/homemade-strawberry-cake-3.jpg"
+            ),
             name="moist-chocolate-layer-cake"
         )
 
