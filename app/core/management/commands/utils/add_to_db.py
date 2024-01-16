@@ -10,6 +10,8 @@ from bs4 import BeautifulSoup as bs
 
 from PIL import Image
 from django.core.files.uploadedfile import InMemoryUploadedFile
+from django.utils.text import slugify
+
 
 from core import models
 
@@ -287,8 +289,8 @@ def add_recipe_to_db(href_list, category, headers, website):
                 # Generate a unique filename
                 ext = os.path.splitext(image_url.split("/")[-1])[1]
                 old_name = os.path.splitext(image_url.split("/")[-1])[0]
-                filename = f'{uuid.uuid4()}{ext}'
-
+                blog_name = slugify(website['name'])
+                filename = f'{blog_name}_{old_name}{ext}'
                 # Create an InMemoryUploadedFile from the downloaded image
                 image_io = BytesIO()
                 image.save(image_io, format='JPEG')
@@ -307,7 +309,7 @@ def add_recipe_to_db(href_list, category, headers, website):
                 models.BlogImage.objects.update_or_create(
                     recipe=recipe,
                     image_url=uploaded_image,
-                    name=old_name
+                    name=filename
                 )
 
     print(f"Data collected!({len(href_list)} recipes added to db)")

@@ -19,8 +19,8 @@ def recipe_image_file_path(instance, filename):
     """
     Generate file path for new recipe image
     """
-    ext = os.path.splitext(filename)[1]  # get the extension
-    filename = f'{uuid.uuid4()}{ext}'  # generate a unique filename
+    # ext = os.path.splitext(filename)[1]  # get the extension
+    # filename = f'{uuid.uuid4()}{ext}'  # generate a unique filename
     return os.path.join('uploads', 'recipe', filename)  # return the path
 
 
@@ -28,8 +28,8 @@ def blog_recipe_image_file_path(instance, filename):
     """
     Generate file path for new recipe image
     """
-    ext = os.path.splitext(filename)[1]  # get the extension
-    filename = f'{uuid.uuid4()}{ext}'  # generate a unique filename
+    # ext = os.path.splitext(filename)[1]  # get the extension
+    # filename = f'{uuid.uuid4()}{ext}'  # generate a unique filename
     return os.path.join('uploads', 'blog-recipe', filename)  # return the path
 
 
