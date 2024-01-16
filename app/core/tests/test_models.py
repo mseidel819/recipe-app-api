@@ -243,3 +243,32 @@ class ModelTests(TestCase):
         )
         self.assertEqual(str(note), 'Make Ahead & Freezing Instructions...'
                          )
+
+    def test_create_favorite(self):
+        """
+        Test creating a new favorite
+        """
+        author = models.BlogAuthor.objects.create(
+            name="sally\'s baking addiction",
+            website_link="https://sallysbakingaddiction.com/"
+        )
+        recipe = models.BlogRecipe.objects.create(
+            author=author,
+            title="My Favorite Cornbread Recipe",
+            slug="my-favorite-cornbread",
+            rating=4.8,
+            num_reviews=282,
+            link="https://sallysbakingaddiction.com/my-favorite-cornbread/",
+            prep_time="10 minutes",
+            cook_time="20 minutes",
+            total_time="1 hour",
+            servings="9 servings",
+            description="I was never a fan of cornbread until this recipe!"
+        )
+        user = create_user()
+        favorite = models.Favorite.objects.create(
+            user=user,
+            recipe=recipe
+        )
+        self.assertEqual(recipe, favorite.recipe)
+        self.assertEqual(user, favorite.user)
