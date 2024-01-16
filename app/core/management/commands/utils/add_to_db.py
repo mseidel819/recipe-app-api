@@ -194,7 +194,8 @@ def add_recipe_to_db(href_list, category, headers, website):
         #     return [section.getText() for section in sections[0]]
 
         instruction_section_titles = []
-        if website['selectors']['instructions']['section_title'] and instruction_sections.select(
+        if website['selectors']['instructions']['section_title']\
+            and instruction_sections.select(
              website['selectors']['instructions']['section_title']
              ):
             instruction_section_titles = map_get_text(

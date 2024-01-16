@@ -210,6 +210,7 @@ class BlogIngredient(models.Model):
     def __str__(self):
         return self.ingredient
 
+
 class BlogInstructionList(models.Model):
     """
     Instruction list object
@@ -269,6 +270,7 @@ class BlogCategory(models.Model):
     def __str__(self):
         return self.name
 
+
 class Favorite(models.Model):
     """
     Favorite object
@@ -284,7 +286,5 @@ class Favorite(models.Model):
         related_name='favorites'
     )
 
-
     def __str__(self):
         return f"{self.user} - {self.recipe}"
-

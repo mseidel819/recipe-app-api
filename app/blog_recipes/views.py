@@ -104,6 +104,7 @@ class BlogRecipeByAuthorViewSet(
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
 
+
 class FavoritesViewSet(
     mixins.ListModelMixin,
     mixins.CreateModelMixin,
@@ -151,11 +152,8 @@ class FavoritesViewSet(
         return list of recipes by author,
         if provided. Otherwise, return all recipes
         """
-        user = self.request.user
-        # queryset = self.queryset.filter(favorites__user=user)
         serializer = self.get_serializer(self.get_queryset(), many=True)
         return Response(serializer.data)
-
 
     def destroy(self, request, *args, **kwargs):
         """
@@ -163,6 +161,8 @@ class FavoritesViewSet(
         """
         recipe_id = kwargs.get('pk')
         print(self.request.user)
-        instance = self.queryset.filter(recipe__id=recipe_id, user=self.request.user)
+        instance = self.queryset.filter(
+            recipe__id=recipe_id, user=self.request.user
+            )
         self.perform_destroy(instance)
         return Response(status=status.HTTP_204_NO_CONTENT)

@@ -199,7 +199,7 @@ class FavoriteBlogRecipesSerializer(serializers.ModelSerializer):
         try:
             favorite = Favorite.objects.get(recipe=blog_recipe, user=user)
         except Favorite.DoesNotExist:
-        # If Favorite does not exist, create a new one
+            # If Favorite does not exist, create a new one
             blog_recipe = BlogRecipe.objects.get(id=recipe_id)
             favorite = Favorite.objects.create(recipe=blog_recipe, user=user)
 
