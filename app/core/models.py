@@ -210,13 +210,27 @@ class BlogIngredient(models.Model):
     def __str__(self):
         return self.ingredient
 
+class BlogInstructionList(models.Model):
+    """
+    Instruction list object
+    """
+    recipe = models.ForeignKey(
+        BlogRecipe,
+        related_name='instruction_list',
+        on_delete=models.CASCADE
+    )
+    title = models.TextField()
+
+    def __str__(self):
+        return self.title
+
 
 class BlogInstruction(models.Model):
     """
     Instruction object
     """
-    recipe = models.ForeignKey(
-        BlogRecipe,
+    instruction_list = models.ForeignKey(
+        BlogInstructionList,
         related_name='instructions',
         on_delete=models.CASCADE
     )
@@ -254,3 +268,23 @@ class BlogCategory(models.Model):
 
     def __str__(self):
         return self.name
+
+class Favorite(models.Model):
+    """
+    Favorite object
+    """
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='favorites'
+    )
+    recipe = models.ForeignKey(
+        BlogRecipe,
+        on_delete=models.CASCADE,
+        related_name='favorites'
+    )
+
+
+    def __str__(self):
+        return f"{self.user} - {self.recipe}"
+

@@ -78,7 +78,7 @@ class ScrapeTests(TestCase):
 
         for instruction in instructions:
             self.assertTrue(instruction.instruction)
-            self.assertTrue(instruction.recipe)
+            self.assertTrue(instruction.instruction_list)
 
         for note in notes:
             self.assertTrue(note.note)
@@ -119,7 +119,7 @@ class ScrapeTests(TestCase):
 
         for instruction in instructions1:
             self.assertTrue(instruction.instruction)
-            self.assertTrue(instruction.recipe)
+            self.assertTrue(instruction.instruction_list)
 
         for note in notes1:
             self.assertTrue(note.note)

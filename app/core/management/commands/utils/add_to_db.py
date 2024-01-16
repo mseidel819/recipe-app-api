@@ -52,7 +52,6 @@ def add_recipe_to_db(href_list, category, headers, website):
             name=website['name'],
             website_link=website['website_link'],
         )
-
         category, create = models.BlogCategory.objects.update_or_create(
             name=category,
             author=author
@@ -131,7 +130,6 @@ def add_recipe_to_db(href_list, category, headers, website):
             recipe.categories.add(category)
 
         # messing with ingredient sections
-            # check a ResultSet type
         if isinstance(soup.select(
                     website['selectors']['ingredients']['class']), list):
             ingredient_sections = soup.select(
@@ -183,17 +181,69 @@ def add_recipe_to_db(href_list, category, headers, website):
                     ingredient=ingredient
                 )
 
-        instructions = get_scraped_arrays(
-            website['selectors']['instructions']['class'],
-            website['selectors']['instructions']['list_type'],
-            soup,
-            website['selectors']['instructions']['is_list_item']
+#  **********************************************************
+        if isinstance(soup.select(
+                    website['selectors']['instructions']['class']), list):
+            instruction_sections = soup.select(
+             website['selectors']['instructions']['class'])[0]
+        else:
+            instruction_sections = soup.select(
+                website['selectors']['instructions']['class'])
+
+        # def map_get_text(sections):
+        #     return [section.getText() for section in sections[0]]
+
+        instruction_section_titles = []
+        if website['selectors']['instructions']['section_title'] and instruction_sections.select(
+             website['selectors']['instructions']['section_title']
+             ):
+            instruction_section_titles = map_get_text(
+                [instruction_sections.select(
+                    website['selectors']['instructions']['section_title']
+                    )]
+                )
+        else:
+            instruction_section_titles = [""]
+
+        instruction_section_lists = []
+        if instruction_sections.select(
+            website['selectors']['instructions']['list_type']
+             ):
+            for ul in instruction_sections.select(
+                        website['selectors']['instructions']['list_type']
+                        ):
+                li_arr = []
+                for li in ul.select("li"):
+                    li_arr.append(li.getText())
+                instruction_section_lists.append(li_arr)
+
+        zipped_instruction_titles_and_sections = zip(
+            instruction_section_titles, instruction_section_lists
             )
-        for instruction in instructions:
-            models.BlogInstruction.objects.update_or_create(
+
+        for title, instructions in zipped_instruction_titles_and_sections:
+            instruction_list, create = models.BlogInstructionList\
+             .objects.update_or_create(
                 recipe=recipe,
-                instruction=instruction
-            )
+                title=title
+             )
+            for instruction in instructions:
+                models.BlogInstruction.objects.update_or_create(
+                    instruction_list=instruction_list,
+                    instruction=instruction
+                )
+
+        # instructions = get_scraped_arrays(
+        #     website['selectors']['instructions']['class'],
+        #     website['selectors']['instructions']['list_type'],
+        #     soup,
+        #     website['selectors']['instructions']['is_list_item']
+        #     )
+        # for instruction in instructions:
+        #     models.BlogInstruction.objects.update_or_create(
+        #         recipe=recipe,
+        #         instruction=instruction
+        #     )
 
         if website['selectors']['notes']["class"] != "":
             notes = get_scraped_arrays(

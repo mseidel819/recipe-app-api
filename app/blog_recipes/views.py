@@ -8,7 +8,7 @@ from drf_spectacular.utils import (
     OpenApiTypes
 )
 
-from rest_framework import viewsets, mixins
+from rest_framework import viewsets, mixins, status
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -16,6 +16,7 @@ from rest_framework.response import Response
 from core.models import (
     BlogRecipe,
     BlogAuthor,
+    Favorite
 )
 from blog_recipes import serializers
 
@@ -62,8 +63,8 @@ class BlogRecipeByAuthorViewSet(
     serializer_class = serializers.BlogRecipeDetailSerializer
     queryset = BlogRecipe.objects.all()
     lookup_field = "id"
-    authentication_classes = (TokenAuthentication,)
-    permission_classes = (IsAuthenticated,)
+    # authentication_classes = (TokenAuthentication,)
+    # permission_classes = (IsAuthenticated,)
 
     def get_queryset(self, *args, **kwargs):
         """
@@ -102,3 +103,66 @@ class BlogRecipeByAuthorViewSet(
             queryset = queryset.filter(categories__name__in=categories)
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
+
+class FavoritesViewSet(
+    mixins.ListModelMixin,
+    mixins.CreateModelMixin,
+    viewsets.GenericViewSet,
+    mixins.DestroyModelMixin,
+):
+    """
+    Manage favorites in the database
+    """
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+
+    serializer_class = serializers.FavoriteBlogRecipesSerializer
+    queryset = Favorite.objects.all()
+
+    def get_queryset(self):
+        """
+        Return objects for the current authenticated user only
+        """
+        user = self.request.user
+        queryset = self.queryset
+        if user:
+            queryset = queryset.filter(user=user)
+            # queryset = queryset.filter(favorites__user=user)
+
+        return queryset.order_by("-id").distinct()
+
+    # do i need this?
+    def perform_create(self, serializer):
+        """
+        Create a new object
+        """
+        serializer.save(user=self.request.user)
+
+    # def get_serializer_class(self):
+    #     """
+    #     Return appropriate serializer class
+    #     """
+    #     if self.action == "list":
+    #         return serializers.BlogRecipeSerializer
+    #     return self.serializer_class
+
+    def list(self, request, *args, **kwargs):
+        """
+        return list of recipes by author,
+        if provided. Otherwise, return all recipes
+        """
+        user = self.request.user
+        # queryset = self.queryset.filter(favorites__user=user)
+        serializer = self.get_serializer(self.get_queryset(), many=True)
+        return Response(serializer.data)
+
+
+    def destroy(self, request, *args, **kwargs):
+        """
+        Delete a favorite
+        """
+        recipe_id = kwargs.get('pk')
+        print(self.request.user)
+        instance = self.queryset.filter(recipe__id=recipe_id, user=self.request.user)
+        self.perform_destroy(instance)
+        return Response(status=status.HTTP_204_NO_CONTENT)

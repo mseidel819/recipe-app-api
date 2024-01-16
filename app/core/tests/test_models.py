@@ -200,13 +200,20 @@ class ModelTests(TestCase):
             description="I was never a fan of cornbread until this recipe!"
         )
 
+        instruction_list = models.BlogInstructionList.objects.create(
+            recipe=recipe,
+            title="crust"
+        )
+
         instruction = models.BlogInstruction.objects.create(
             instruction="Preheat oven to 400\u00b0F (204\u00b0C).",
-            recipe=recipe
+            instruction_list=instruction_list
         )
         self.assertEqual(
             str(instruction), 'Preheat oven to 400\u00b0F (204\u00b0C).'
             )
+        self.assertEqual(str(instruction_list), 'crust')
+        self.assertIn(instruction, instruction_list.instructions.all())
 
     def test_create_blog_note(self):
         """
