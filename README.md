@@ -6,17 +6,18 @@ This is a personal project that I needed to make because of how frustrated I get
 
 There are two setions of this project. both require user authentication by creating a user(email) and password in order to create a token that is used to access the API.
 
-## app/blog_recipes
-
 ### Authentication
 
 1. In order to authorize, send a POST request to /api/user/token/ and add your username and a password in the body of the request. This will return a token that you can use to access the API.
 2. Click the Authorize button in the top right corner of the docs page and add the token to the 'tokenAuth' section in the following format: Token PUT_TOKEN_HERE
 
+## app/blog_recipes
+
 - The /app/blog_recipes API is a recipe storage system that scrapes recipes from my most used food blogs.
 - Allows the user to see all of the recipes collected from specific food blogs. Users are only allowed to GET recipes from this API.
 - /api/blog-recipes/authors/ does not require authentication and returns a list of all of the authors that have recipes in the database.
-- /api/blog-recipes/by-author/{author_id} does require authentication and returns a list of all of the recipes by a certain author in the database.
+- /api/blog-recipes/by-author/{author_id} returns a list of all of the recipes by a certain author in the database.
+- /api/blog-recipes/favorites/ returns a list of all of the recipes that the user has favorited.
 - The recipes are scraped from the food blogs using the scrape.py file.
 - In order to scrape a new blog, add the blog name and all relevant data to the blog_data.json file and run the scrape.py file.
 - Built using Django REST Framework, Docker, AWS, Beautiful Soup, and PostgreSQL.
@@ -46,6 +47,7 @@ A list of blogs to scrape are:
 
 - sallys-baking-addiction
 - budjet-bytes
+- half-baked-harvest
 
 These are updated in core/management/commands/utils/blog_data.json
 
