@@ -49,6 +49,8 @@ A list of blogs to scrape are:
 
 These are updated in core/management/commands/utils/blog_data.json
 
-```
-
-```
+TODO:
+half-baked-harvest rating-avg and rating-total
+update tests for more thourough scenarios.
+pagination
+fuzzy search

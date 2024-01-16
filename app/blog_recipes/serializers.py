@@ -12,6 +12,8 @@ from core.models import (
     BlogImage,
     BlogCategory,
     BlogIngredientList,
+    BlogInstructionList,
+    Favorite
 )
 
 
@@ -53,6 +55,22 @@ class BlogInstructionSerializer(serializers.ModelSerializer):
         """Meta class"""
         model = BlogInstruction
         fields = ('instruction',)
+
+
+class BlogInstructionListSerializer(serializers.ModelSerializer):
+    """Serializer for instruction list object"""
+    instructions = serializers.SerializerMethodField()
+
+    class Meta:
+        """Meta class"""
+        model = BlogInstructionList
+        fields = ('title', 'instructions')
+
+    def get_instructions(self, obj):
+        """orders instructions by id to preserve original order"""
+        ordered_instructions = obj.instructions.order_by('id')
+        return [instruction['instruction']
+                for instruction in ordered_instructions.values()]
 
 
 class BlogCategorySerializer(serializers.ModelSerializer):
@@ -142,7 +160,7 @@ class BlogRecipeDetailSerializer(BlogRecipeSerializer):
     Serializer for recipe detail object
     """
     ingredient_list = BlogIngredientListSerializer(many=True, read_only=True)
-    instructions = serializers.SerializerMethodField()
+    instruction_list = BlogInstructionListSerializer(many=True, read_only=True)
     notes = serializers.SerializerMethodField()
     images = BlogRecipeImageSerializer(many=True, read_only=True)
 
@@ -151,17 +169,38 @@ class BlogRecipeDetailSerializer(BlogRecipeSerializer):
         fields = BlogRecipeSerializer.Meta.fields + (
             "description", "num_reviews", "prep_time", "cook_time",
             "total_time", "servings", "images",
-            "ingredient_list", "instructions", "notes"
+            "ingredient_list", "instruction_list", "notes"
         )
         read_only_fields = ('id',)
-
-    def get_instructions(self, obj):
-        """orders instructions by id to preserve original order"""
-        ordered_instructions = obj.instructions.order_by('id')
-        return [instruction['instruction']
-                for instruction in ordered_instructions.values()]
 
     def get_notes(self, obj):
         """orders notes by id to preserve original order"""
         ordered_notes = obj.notes.order_by('id')
         return [note['note'] for note in ordered_notes.values()]
+
+
+class FavoriteBlogRecipesSerializer(serializers.ModelSerializer):
+    """Serializer for favorite recipe object"""
+    recipe_id = serializers.IntegerField(write_only=True)
+    recipe = BlogRecipeSerializer(read_only=True)
+
+    class Meta:
+        """Meta class"""
+        model = Favorite
+        fields = ('recipe_id', 'recipe')
+
+    def create(self, validated_data):
+        """Create method to handle POST request"""
+        # Extract the recipe_id from validated data
+        recipe_id = validated_data.pop('recipe_id')
+        user = self.context['request'].user
+        blog_recipe = BlogRecipe.objects.get(id=recipe_id)
+
+        try:
+            favorite = Favorite.objects.get(recipe=blog_recipe, user=user)
+        except Favorite.DoesNotExist:
+            # If Favorite does not exist, create a new one
+            blog_recipe = BlogRecipe.objects.get(id=recipe_id)
+            favorite = Favorite.objects.create(recipe=blog_recipe, user=user)
+
+        return favorite

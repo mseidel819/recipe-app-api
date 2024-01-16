@@ -180,7 +180,6 @@ class BlogRecipeApiTests(TestCase):
             slug="recipe3",
         )
         recipe3.categories.add(cake)
-
         request = self.factory.get(
             reverse("blog-recipes:blogrecipe-list", args=[self.author.id]))
         res = self.client.get(
@@ -197,3 +196,61 @@ class BlogRecipeApiTests(TestCase):
         self.assertIn(serializer2.data, res.data)
         self.assertNotIn(serializer3.data, res.data)
         self.assertEqual(len(res.data), 2)
+
+
+class FavoriteApiTests(TestCase):
+    """
+    Test favorite api access
+    """
+    def setUp(self):
+        self.client = APIClient()
+        self.user = create_user(
+            email="test@example.com",
+            password="test123"
+        )
+        self.author = create_author()
+        # self.factory = RequestFactory()
+        self.client.force_authenticate(self.user)
+
+    def test_create_favorite(self):
+        """
+        Test creating a new favorite
+        """
+        recipe = create_recipe(author=self.author)
+        payload = {"recipe_id": recipe.id}
+        res = self.client.post(
+            reverse("blog-recipes:favorite-list"), payload)
+        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(res.data["recipe"]["id"], recipe.id)
+
+    def test_create_favorite_duplicate(self):
+        """
+        Test creating a duplicate favorite
+        """
+        recipe = create_recipe(author=self.author)
+        payload = {"recipe_id": recipe.id}
+        self.client.post(
+            reverse("blog-recipes:favorite-list"), payload)
+        self.client.post(
+            reverse("blog-recipes:favorite-list"), payload)
+        # get the number of favorites for the recipe
+        num_favorites = recipe.favorites.count()
+        self.assertEqual(num_favorites, 1)
+
+    def test_delete_favorite(self):
+        """
+        Test deleting a favorite
+        """
+        recipe = create_recipe(author=self.author)
+        recipe2 = create_recipe(author=self.author, slug="recipe2")
+        payload1 = {"recipe_id": recipe.id}
+        payload2 = {"recipe_id": recipe2.id}
+        self.client.post(
+            reverse("blog-recipes:favorite-list"), payload1)
+        self.client.post(
+            reverse("blog-recipes:favorite-list"), payload2)
+        res = self.client.delete(
+            reverse("blog-recipes:favorite-detail", args=[recipe.id]))
+        self.assertEqual(res.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(res.data, None)
+        self.assertEqual(recipe2.favorites.count(), 1)

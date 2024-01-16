@@ -18,6 +18,10 @@ router_recipes.register(
 
 router_author = DefaultRouter()
 router_author.register('authors', views.AuthorViewSet, basename='blogauthor')
+router_author.register(
+    'favorites', views.FavoritesViewSet, basename='favorite'
+    )
+
 
 app_name = 'blog-recipes'
 
