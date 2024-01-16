@@ -3,7 +3,6 @@ Add/update each recipe to the database
 """
 from urllib.parse import urlparse
 import os
-import uuid
 from io import BytesIO
 import requests
 from bs4 import BeautifulSoup as bs
