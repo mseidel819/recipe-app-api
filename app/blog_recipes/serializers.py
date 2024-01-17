@@ -131,8 +131,11 @@ class BlogRecipeSerializer(serializers.ModelSerializer):
         read_only_fields = ('id',)
 
     def get_author(self, obj):
-        """gets author name only"""
-        return obj.author.name
+        """gets author name and id"""
+        return {
+            "id": obj.author.id,
+            "name": obj.author.name
+        }
 
     def get_categories(self, obj):
         """orders categories by id to preserve original order"""
