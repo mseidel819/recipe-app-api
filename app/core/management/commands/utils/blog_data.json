@@ -3,8 +3,7 @@
     "name": "Sally's Baking Addiction",
     "website_link": "https://sallysbakingaddiction.com/",
     "category_entry_url": "https://sallysbakingaddiction.com/category/",
-    "categories": ["desserts/pies-crisps-tarts"],
-    "categoriessss": [
+    "categories": [
       "desserts/pies-crisps-tarts",
       "bread",
       "breakfast-treats",
@@ -47,8 +46,7 @@
     "name": "Budjet Bytes",
     "website_link": "https://www.budgetbytes.com/",
     "category_entry_url": "https://www.budgetbytes.com/category/recipes/",
-    "categories": ["sauce", "sandwich"],
-    "categoriesss": [
+    "categories": [
       "appetizers",
       "beansandgrains",
       "bowl-meals",
@@ -121,8 +119,7 @@
     "name": "Half Baked Harvest",
     "website_link": "https://www.halfbakedharvest.com/",
     "category_entry_url": "https://www.halfbakedharvest.com/category/recipes/",
-    "categories": ["type-of-meal/main-course/pizza-recipes"],
-    "categoriess": [
+    "categories": [
       "type-of-meal/bread-recipes",
       "type-of-meal/breakfast",
       "type-of-meal/desserts/cookies-2",
