@@ -63,8 +63,8 @@ class BlogRecipeByAuthorViewSet(
     serializer_class = serializers.BlogRecipeDetailSerializer
     queryset = BlogRecipe.objects.all()
     lookup_field = "id"
-    # authentication_classes = (TokenAuthentication,)
-    # permission_classes = (IsAuthenticated,)
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
 
     def get_queryset(self, *args, **kwargs):
         """
