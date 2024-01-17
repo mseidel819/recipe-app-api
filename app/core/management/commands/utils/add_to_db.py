@@ -2,39 +2,24 @@
 Add/update each recipe to the database
 """
 from urllib.parse import urlparse
-import os
-from io import BytesIO
+
 import requests
 from bs4 import BeautifulSoup as bs
 
-from PIL import Image
-from django.core.files.uploadedfile import InMemoryUploadedFile
-from django.utils.text import slugify
-
-
 from core import models
+from core.management.commands.utils.helpers import (
+    get_text,
+    get_scraped_arrays,
+    set_ingredients,
+    set_instructions,
+    set_images
+)
 
 
 def add_recipe_to_db(href_list, category, headers, website):
     """
     creates a json file from a list of urls
     """
-    def get_text(identifier, soup):
-        if len(soup.select(identifier)) > 0:
-            return soup.select(identifier)[0].getText()
-        return ""
-
-# possible mods for absrtation between blogs
-    def get_scraped_arrays(source, list_type, soup, li=True):
-        if li:
-            html = soup.select(f"{source} > {list_type} > li")
-        else:
-            html = soup.select(f"{source} {list_type}")
-        final_array = []
-        for item in html:
-            final_array.append(item.getText())
-        return final_array
-
     # scraping through each url
     print("Beginning data collection...")
 
@@ -130,105 +115,22 @@ def add_recipe_to_db(href_list, category, headers, website):
         if category not in recipe.categories.all():
             recipe.categories.add(category)
 
-        def map_get_text(sections):
-            return [section.getText() for section in sections[0]]
+        set_ingredients(
+            website['selectors']['ingredients']['class'],
+            website['selectors']['ingredients']['section_title'],
+            website['selectors']['ingredients']['list_type'],
+            soup,
+            recipe
+        )
 
-        ingredient_sections = soup.select(
-            website['selectors']['ingredients']['class'])
-        ing_section_titles = []
-        for section in ingredient_sections:
-            if section.select(
-                website['selectors']['ingredients']['section_title']
-                 ):
-                title_list = map_get_text(
-                    [section.select(
-                        website['selectors']['ingredients']['section_title']
-                        )]
-                    )
-                for title in title_list:
-                    ing_section_titles.append(title)
-            else:
-                ing_section_titles.append('')
-
-        ing_section_lists = []
-        for section in ingredient_sections:
-            if section.select(
-                website['selectors']['ingredients']['list_type']
-                 ):
-                for ul in section.select(
-                            website['selectors']['ingredients']['list_type']
-                            ):
-                    li_arr = []
-                    for li in ul.select("li"):
-                        li_arr.append(li.getText())
-                    ing_section_lists.append(li_arr)
-
-        zipped_ingredient_titles_and_sections = zip(
-            ing_section_titles, ing_section_lists
-            )
-        for title, ingredients in zipped_ingredient_titles_and_sections:
-            ing_list, create = models.BlogIngredientList\
-             .objects.update_or_create(
-                recipe=recipe,
-                title=title
-             )
-            for ingredient in ingredients:
-                models.BlogIngredient.objects.update_or_create(
-                    ingredient_list=ing_list,
-                    ingredient=ingredient
-                )
-
-        instruction_sections = soup.select(
-            website['selectors']['instructions']['class'])
-        instruction_section_titles = []
-        for section in instruction_sections:
-            if website['selectors']['instructions']['section_title']\
-                  and section.select(
-                website['selectors']['instructions']['section_title']
-                 ):
-                title_list = map_get_text(
-                    [section.select(
-                        website['selectors']['instructions']['section_title']
-                        )]
-                    )
-                for title in title_list:
-                    instruction_section_titles.append(title)
-            else:
-                instruction_section_titles.append('')
-
-        instruction_section_lists = []
-        for section in instruction_sections:
-            if section.select(
-                website['selectors']['instructions']['list_type']
-                 ):
-                for ul in section.select(
-                            website['selectors']['instructions']['list_type']
-                            ):
-                    li_arr = []
-                    for li in ul.select("li"):
-                        if website['name'] == "Half Baked Harvest":
-                            span_arr = li.select('span')
-                            for span in span_arr:
-                                li_arr.append(span.getText())
-                        else:
-                            li_arr.append(li.getText())
-                    # print(li_arr)
-                    instruction_section_lists.append(li_arr)
-
-        zipped_instruction_titles_and_sections = zip(
-            instruction_section_titles, instruction_section_lists
-            )
-        for title, instructions in zipped_instruction_titles_and_sections:
-            instruction_list, create = models.BlogInstructionList\
-             .objects.update_or_create(
-                recipe=recipe,
-                title=title
-             )
-            for instruction in instructions:
-                models.BlogInstruction.objects.update_or_create(
-                    instruction_list=instruction_list,
-                    instruction=instruction
-                )
+        set_instructions(
+            website['selectors']['instructions']['class'],
+            website['selectors']['instructions']['section_title'],
+            website['selectors']['instructions']['list_type'],
+            soup,
+            recipe,
+            website['name']
+        )
 
         if website['selectors']['notes']["class"] != "":
             notes = get_scraped_arrays(
@@ -243,54 +145,6 @@ def add_recipe_to_db(href_list, category, headers, website):
                     note=note
                 )
 
-        existing_image = models.BlogImage.objects.filter(
-                    recipe=recipe,
-                    image_url__isnull=False
-                ).first()
-
-        if not existing_image:
-            images = []
-
-            img_html = soup.select(website['selectors']['img_html'])
-            for img in img_html:
-                img_src = img.get('src')
-                if img_src[:5] == "https":
-                    images.append(img.get('src'))
-
-            for image_url in images:
-                # Download the image from the URL
-                response = requests.get(image_url, headers=headers)
-
-                # Try to open the image with PIL
-                image = Image.open(BytesIO(response.content))
-
-                if image.mode != 'RGB':
-                    image = image.convert('RGB')
-
-                # Generate a unique filename
-                ext = os.path.splitext(image_url.split("/")[-1])[1]
-                old_name = os.path.splitext(image_url.split("/")[-1])[0]
-                blog_name = slugify(website['name'])
-                filename = f'{blog_name}_{old_name}{ext}'
-                # Create an InMemoryUploadedFile from the downloaded image
-                image_io = BytesIO()
-                image.save(image_io, format='JPEG')
-
-                uploaded_image = InMemoryUploadedFile(
-                    image_io,  # file
-                    None,  # field_name
-                    filename,  # file name
-                    'image/jpeg',  # content_type
-                    image_io.tell,  # size
-                    None  # content_type_extra
-                )
-
-                # Update or create the BlogImage instance
-                # with the uploaded image
-                models.BlogImage.objects.update_or_create(
-                    recipe=recipe,
-                    image_url=uploaded_image,
-                    name=filename
-                )
+        set_images(recipe, website, soup, headers)
 
     print(f"Data collected!({len(href_list)} recipes added to db)")
