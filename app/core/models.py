@@ -193,7 +193,7 @@ class BlogIngredientList(models.Model):
     title = models.TextField()
 
     def __str__(self):
-        return self.title
+        return f'{self.title} for {self.recipe}'
 
 
 class BlogIngredient(models.Model):

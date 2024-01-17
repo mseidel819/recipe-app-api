@@ -175,7 +175,10 @@ class ModelTests(TestCase):
         self.assertEqual(
             str(ingredient), '1 cup (240ml) whole milk, at room temperature'
             )
-        self.assertEqual(str(ingredient_list), 'crust')
+        self.assertEqual(
+            str(ingredient_list)[:50],
+            'crust for My Favorite Cornbread Recipe by sally\'s '
+             )
         self.assertIn(ingredient, ingredient_list.ingredients.all())
 
     def test_create_blog_instruction(self):

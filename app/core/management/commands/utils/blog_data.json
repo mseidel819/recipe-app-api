@@ -110,7 +110,7 @@
         "section_title": ""
       },
       "notes": {
-        "class": "wprm-recipe-notes",
+        "class": ".wprm-recipe-notes",
         "list_type": "span",
         "is_list_item": false
       },
@@ -155,7 +155,7 @@
       "instructions": {
         "class": ".wprm-recipe-instruction-group",
         "list_type": "ul",
-        "section_title": ".wprm-recipe-instructions-header",
+        "section_title": ".wprm-recipe-instruction-group-name",
         "is_list_item": true
       },
       "notes": {
