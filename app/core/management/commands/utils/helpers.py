@@ -132,7 +132,7 @@ def set_images(recipe, website, soup, headers):
         img_html = soup.select(website['selectors']['img_html'])
         for img in img_html:
             img_src = img.get('src')
-            if img_src[:5] == "https":
+            if img_src is not None and img_src[:5] == "https":
                 images.append(img.get('src'))
 
         for image_url in images:

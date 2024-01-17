@@ -120,6 +120,10 @@
     "website_link": "https://www.halfbakedharvest.com/",
     "category_entry_url": "https://www.halfbakedharvest.com/category/recipes/",
     "categories": [
+      "diet-specific/gluten-free-recipes",
+      "diet-specific/vegetarian"
+    ],
+    "categoriesss": [
       "type-of-meal/bread-recipes",
       "type-of-meal/breakfast",
       "type-of-meal/desserts/cookies-2",
