@@ -158,6 +158,6 @@ SPECTACULAR_SETTINGS = {
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
-    "https://peppy-alpaca-9050d7.netlify.app/"
+    "https://peppy-alpaca-9050d7.netlify.app"
     # Add other origins as needed
 ]
