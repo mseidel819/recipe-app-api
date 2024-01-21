@@ -55,4 +55,8 @@ TODO:
 half-baked-harvest rating-avg and rating-total
 update tests for more thourough scenarios.
 pagination
-fuzzy search
+fuzzy search-all, search-author, search-category
+
+### add filters and queries
+
+- by rating. num-rating tiebreaker
