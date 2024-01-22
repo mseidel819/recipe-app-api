@@ -1,6 +1,6 @@
 # recipe-app-api
 
-Link to live API docs [here](http://ec2-18-118-138-187.us-east-2.compute.amazonaws.com/api/docs/).
+Link to live API docs [here](https://peppy-alpaca-9050d7.netlify.app/api/docs/).
 
 This is a personal project that I needed to make because of how frustrated I get with recipe blogs. Currently, it is set up to extract all of the recipe info from Sally's Baking Addiction and Budjet Bytes, and throw it into an API that I can access through another react app. The next step is to create a frontend in order to display the data so I can access my favorite recipes without all of the fluff and ads that make recipe blogs suck.
 
