@@ -92,6 +92,8 @@ class BlogRecipeByAuthorViewSet(
     lookup_field = "id"
     # pagination_class = PageNumberPagination
     pagination_class = CustomPageNumberPagination
+    page_size_query_param = 'page_size'  # Set the query parameter for page size
+
     filter_backends = [DjangoFilterBackend]
     filterset_class = RecipeFilter
     # authentication_classes = (TokenAuthentication,)
