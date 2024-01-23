@@ -121,7 +121,7 @@ class BlogRecipeApiTests(TestCase):
         serializer = BlogRecipeSerializer(
             recipes, many=True, context={'request': request})
         self.assertEqual(res.status_code, status.HTTP_200_OK)
-        self.assertEqual(res.data, serializer.data)
+        self.assertEqual(res.data.get('results', []), serializer.data)
 
     def test_view_recipe_detail(self):
         """
@@ -192,10 +192,10 @@ class BlogRecipeApiTests(TestCase):
             recipe2, context={'request': request})
         serializer3 = BlogRecipeSerializer(
             recipe3, context={'request': request})
-        self.assertIn(serializer1.data, res.data)
-        self.assertIn(serializer2.data, res.data)
-        self.assertNotIn(serializer3.data, res.data)
-        self.assertEqual(len(res.data), 2)
+        self.assertIn(serializer1.data, res.data.get('results', []))
+        self.assertIn(serializer2.data, res.data.get('results', []))
+        self.assertNotIn(serializer3.data, res.data.get('results', []))
+        self.assertEqual(len(res.data.get('results', [])), 2)
 
 
 class FavoriteApiTests(TestCase):

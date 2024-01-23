@@ -8,6 +8,9 @@ from drf_spectacular.utils import (
     OpenApiTypes
 )
 
+from django_filters.rest_framework import DjangoFilterBackend
+from django_filters import FilterSet, CharFilter
+
 from rest_framework import viewsets, mixins, status
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
@@ -21,6 +24,28 @@ from core.models import (
     Favorite
 )
 from blog_recipes import serializers
+
+
+class CustomPageNumberPagination(PageNumberPagination):
+    page_size = 15  # Set your desired page size
+    page_size_query_param = 'page_size'
+    max_page_size = 50
+
+    def paginate_queryset(self, queryset, request, view=None):
+        # Check if the view is an instance of YourSpecificViewClass
+        if view and isinstance(view, BlogRecipeByAuthorViewSet):
+            return super().paginate_queryset(queryset, request, view)
+        else:
+            # Return the entire queryset without pagination
+            return None
+
+
+class RecipeFilter(FilterSet):
+    title = CharFilter(lookup_expr='icontains')
+
+    class Meta:
+        model = BlogRecipe
+        fields = ['title']
 
 
 @extend_schema_view(
@@ -65,7 +90,10 @@ class BlogRecipeByAuthorViewSet(
     serializer_class = serializers.BlogRecipeDetailSerializer
     queryset = BlogRecipe.objects.all()
     lookup_field = "id"
-    pagination_class = PageNumberPagination
+    # pagination_class = PageNumberPagination
+    pagination_class = CustomPageNumberPagination
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = RecipeFilter
     # authentication_classes = (TokenAuthentication,)
     # permission_classes = (IsAuthenticated,)
 
@@ -78,7 +106,6 @@ class BlogRecipeByAuthorViewSet(
         if author_id:
             queryset = queryset.filter(author__id=int(author_id))
 
-        print("*************",queryset)
         return queryset.distinct()
 
     def get_serializer_class(self):
@@ -106,7 +133,10 @@ class BlogRecipeByAuthorViewSet(
             categories = categories.split(",")
             queryset = queryset.filter(categories__name__in=categories)
 
-        paginated_queryset = self.paginate_queryset(queryset.order_by("-rating"))
+        filtered_queryset = self.filter_queryset(queryset)
+        paginated_queryset = self.paginate_queryset(
+            filtered_queryset.order_by("-rating")
+            )
 
         serializer = self.get_serializer(paginated_queryset, many=True)
         return self.get_paginated_response(serializer.data)
@@ -167,7 +197,6 @@ class FavoritesViewSet(
         Delete a favorite
         """
         recipe_id = kwargs.get('pk')
-        print(self.request.user)
         instance = self.queryset.filter(
             recipe__id=recipe_id, user=self.request.user
             )
