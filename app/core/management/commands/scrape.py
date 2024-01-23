@@ -24,15 +24,25 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         # Define the command line arguments
         parser.add_argument('website', nargs='+', type=str)
+        #  add ategory argument
+        parser.add_argument(
+            '--category',
+            nargs='+',
+            type=str,
+            help='Specify the category to scrape'
+        )
 
     def handle(self, *args, **options):
         """Handle the command"""
         website = data[options['website'][0]]
+        categories = options['category']
+        if not categories:
+            categories = website['categories']
 
         HEADERS = {'User-Agent': 'Mozilla/5.0 (iPad; CPU OS 12_2 like Mac OS X)\
                 AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148'}
 
-        for category in website['categories']:
+        for category in categories:
             cleaned_filename = category.split('/')[-1]
             url = f'{website["category_entry_url"]}{category}/'
             href_list = get_urls(url, HEADERS, website)
