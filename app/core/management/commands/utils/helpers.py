@@ -32,6 +32,31 @@ def get_scraped_arrays(source, list_type, soup, li=True):
 def map_get_text(sections):
     return [section.getText() for section in sections[0]]
 
+def get_rating(rating, data_type, soup):
+    """gets rating for recipe. accounts for text and data values"""
+    if data_type == "data-attr":
+        data = soup.select(rating)[0]
+        return float(data.get('data-average'))
+
+    if data_type == "text":
+        return 0 if get_text(rating, soup) == "" else float(
+            get_text(rating, soup)
+            )
+    return 0
+
+
+def get_num_reviews(num_reviews, data_type, soup):
+    """gets rating for recipe. accounts for text and data values"""
+    if data_type == "data-attr":
+        data = soup.select(num_reviews)[0]
+        return float(data.get('data-count'))
+
+    if data_type == "text":
+        return 0 if get_text(num_reviews, soup) == "" else float(
+            get_text(num_reviews, soup)
+            )
+    return 0
+
 
 def get_section_titles(class_name, section_title, soup):
     """gets section titles for ingredients and instructions"""

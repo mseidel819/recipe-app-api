@@ -39,7 +39,7 @@ In order to refresh the recipe DB within the docker env, run the following comma
 
 ```
 
-docker-compose run --rm app sh -c "python manage.py scrape [blog_name]"
+docker-compose run --rm app sh -c "python manage.py scrape [blog_name] --category [categories to scrape(comma separated)]"
 
 ```
 
@@ -54,9 +54,8 @@ These are updated in core/management/commands/utils/blog_data.json
 ### TODO:
 
 - learn how to spell budget
-- half-baked-harvest rating-avg and rating-total
 - update tests for more thourough scenarios.
-- fuzzy search-all, search-author, search-category
+- fuzzy search-all, search-author,
 
 ### add filters and queries
 

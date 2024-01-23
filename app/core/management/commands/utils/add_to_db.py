@@ -8,6 +8,8 @@ from bs4 import BeautifulSoup as bs
 
 from core import models
 from core.management.commands.utils.helpers import (
+    get_rating,
+    get_num_reviews,
     get_text,
     get_scraped_arrays,
     set_ingredients,
@@ -45,6 +47,15 @@ def add_recipe_to_db(href_list, category, headers, website):
 
         slug = parsed_url.path.replace("/", "")
 
+        rating = 0
+        if website['name'] == "Half Baked Harvest":
+            num_reviews = get_num_reviews(website['selectors']['num_reviews'], "data-attr", soup)
+            rating = get_rating( website['selectors']['rating'], "data-attr", soup)
+        else:
+            rating = get_rating( website['selectors']['rating'], "text", soup)
+            num_reviews = get_num_reviews(website['selectors']['num_reviews'], "text", soup)
+
+
         existing_recipe = models.BlogRecipe.objects.filter(
             author=author,
             slug=slug
@@ -56,18 +67,8 @@ def add_recipe_to_db(href_list, category, headers, website):
                 soup)
             existing_recipe.slug = slug
             existing_recipe.link = url
-            existing_recipe.rating = 0 if get_text(
-               website['selectors']['rating'],
-               soup
-                ) == "" else float(get_text(
-                    website['selectors']['rating'],
-                    soup))
-            existing_recipe.num_reviews = 0 if get_text(
-                website['selectors']['num_reviews'],
-                soup
-                ) == "" else get_text(
-                    website['selectors']['num_reviews'],
-                    soup)
+            existing_recipe.rating = rating
+            existing_recipe.num_reviews = num_reviews
             existing_recipe.description = get_text(
                 website['selectors']['description'],
                 soup)
@@ -91,16 +92,8 @@ def add_recipe_to_db(href_list, category, headers, website):
                 author=author,
                 slug=slug,
                 link=url,
-                rating=0 if get_text(
-                            website['selectors']['rating'], soup
-                            ) == "" else float(
-                                get_text(website['selectors']['rating'],
-                                         soup)),
-                num_reviews=0 if get_text(
-                    website['selectors']['num_reviews'], soup
-                    ) == "" else get_text(
-                        website['selectors']['num_reviews'], soup
-                        ),
+                rating=rating,
+                num_reviews= num_reviews,
                 description=get_text(website['selectors']['description'],
                                      soup),
                 prep_time=get_text(website['selectors']['prep_time'],
