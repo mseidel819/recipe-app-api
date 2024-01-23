@@ -46,16 +46,17 @@ docker-compose run --rm app sh -c "python manage.py scrape [blog_name]"
 A list of blogs to scrape are:
 
 - sallys-baking-addiction
-- budjet-bytes
+- budget-bytes
 - half-baked-harvest
 
 These are updated in core/management/commands/utils/blog_data.json
 
-TODO:
-half-baked-harvest rating-avg and rating-total
-update tests for more thourough scenarios.
-pagination
-fuzzy search-all, search-author, search-category
+### TODO:
+
+- learn how to spell budget
+- half-baked-harvest rating-avg and rating-total
+- update tests for more thourough scenarios.
+- fuzzy search-all, search-author, search-category
 
 ### add filters and queries
 

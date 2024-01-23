@@ -12,6 +12,8 @@ from rest_framework import viewsets, mixins, status
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.pagination import PageNumberPagination
+
 
 from core.models import (
     BlogRecipe,
@@ -63,6 +65,7 @@ class BlogRecipeByAuthorViewSet(
     serializer_class = serializers.BlogRecipeDetailSerializer
     queryset = BlogRecipe.objects.all()
     lookup_field = "id"
+    pagination_class = PageNumberPagination
     # authentication_classes = (TokenAuthentication,)
     # permission_classes = (IsAuthenticated,)
 
@@ -75,7 +78,8 @@ class BlogRecipeByAuthorViewSet(
         if author_id:
             queryset = queryset.filter(author__id=int(author_id))
 
-        return queryset.order_by("-id").distinct()
+        print("*************",queryset)
+        return queryset.distinct()
 
     def get_serializer_class(self):
         """
@@ -94,15 +98,18 @@ class BlogRecipeByAuthorViewSet(
         categories = self.request.query_params.get("categories")
 
         if author is None:
-            queryset = self.queryset.all().order_by("-id")
+            queryset = self.queryset.all()
         else:
             queryset = self.queryset.filter(author__id=author)
 
         if categories:
             categories = categories.split(",")
             queryset = queryset.filter(categories__name__in=categories)
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
+
+        paginated_queryset = self.paginate_queryset(queryset.order_by("-rating"))
+
+        serializer = self.get_serializer(paginated_queryset, many=True)
+        return self.get_paginated_response(serializer.data)
 
 
 class FavoritesViewSet(
