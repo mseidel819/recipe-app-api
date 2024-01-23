@@ -32,6 +32,7 @@ def get_scraped_arrays(source, list_type, soup, li=True):
 def map_get_text(sections):
     return [section.getText() for section in sections[0]]
 
+
 def get_rating(rating, data_type, soup):
     """gets rating for recipe. accounts for text and data values"""
     if data_type == "data-attr":
@@ -88,7 +89,11 @@ def set_ingredients(class_name, section_title, list_type, soup, recipe):
             for ul in section.select(list_type):
                 li_arr = []
                 for li in ul.select("li"):
-                    li_arr.append(li.getText())
+                    text = li.getText()
+                    if text[:1] == "▢":
+                        text = text[2:]
+
+                    li_arr.append(text)
                 ing_section_lists.append(li_arr)
 
     zipped_ingredient_titles_and_sections = zip(
@@ -125,7 +130,7 @@ def set_instructions(
                     if website_name == "Half Baked Harvest":
                         span_arr = li.select('span')
                         for span in span_arr:
-                            li_arr.append(span.getText())
+                            li_arr.append(span.getText()[3:])
                     else:
                         li_arr.append(li.getText())
                 instruction_section_lists.append(li_arr)

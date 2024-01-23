@@ -49,12 +49,15 @@ def add_recipe_to_db(href_list, category, headers, website):
 
         rating = 0
         if website['name'] == "Half Baked Harvest":
-            num_reviews = get_num_reviews(website['selectors']['num_reviews'], "data-attr", soup)
-            rating = get_rating( website['selectors']['rating'], "data-attr", soup)
+            num_reviews = get_num_reviews(
+                website['selectors']['num_reviews'], "data-attr", soup)
+            rating = get_rating(
+                website['selectors']['rating'], "data-attr", soup)
         else:
-            rating = get_rating( website['selectors']['rating'], "text", soup)
-            num_reviews = get_num_reviews(website['selectors']['num_reviews'], "text", soup)
-
+            rating = get_rating(
+                website['selectors']['rating'], "text", soup)
+            num_reviews = get_num_reviews(
+                website['selectors']['num_reviews'], "text", soup)
 
         existing_recipe = models.BlogRecipe.objects.filter(
             author=author,
@@ -93,7 +96,7 @@ def add_recipe_to_db(href_list, category, headers, website):
                 slug=slug,
                 link=url,
                 rating=rating,
-                num_reviews= num_reviews,
+                num_reviews=num_reviews,
                 description=get_text(website['selectors']['description'],
                                      soup),
                 prep_time=get_text(website['selectors']['prep_time'],
