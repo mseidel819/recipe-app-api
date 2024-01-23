@@ -56,7 +56,6 @@ These are updated in core/management/commands/utils/blog_data.json
 - learn how to spell budget
 - update tests for more thourough scenarios.
 - fuzzy search-all, search-author,
-- hbh boxes in ingredients, double instruction numbers
 
 ### add filters and queries
 
