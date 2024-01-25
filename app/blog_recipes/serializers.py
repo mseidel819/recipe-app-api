@@ -188,7 +188,6 @@ class FavoriteBlogRecipesSerializer(serializers.ModelSerializer):
     recipe = BlogRecipeSerializer(read_only=True)
     # recipes = serializers.SerializerMethodField()
 
-
     class Meta:
         """Meta class"""
         model = Favorite
@@ -209,8 +208,6 @@ class FavoriteBlogRecipesSerializer(serializers.ModelSerializer):
             favorite = Favorite.objects.create(recipe=blog_recipe, user=user)
 
         return favorite
-
-
 
     def to_representation(self, instance):
         """Override to destructure the 'recipe' key"""
