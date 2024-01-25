@@ -221,7 +221,7 @@ class FavoriteApiTests(TestCase):
         res = self.client.post(
             reverse("blog-recipes:favorite-list"), payload)
         self.assertEqual(res.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(res.data["recipe"]["id"], recipe.id)
+        self.assertEqual(res.data["id"], recipe.id)
 
     def test_create_favorite_duplicate(self):
         """
