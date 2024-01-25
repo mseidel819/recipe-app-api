@@ -186,6 +186,8 @@ class FavoriteBlogRecipesSerializer(serializers.ModelSerializer):
     """Serializer for favorite recipe object"""
     recipe_id = serializers.IntegerField(write_only=True)
     recipe = BlogRecipeSerializer(read_only=True)
+    # recipes = serializers.SerializerMethodField()
+
 
     class Meta:
         """Meta class"""
@@ -207,3 +209,10 @@ class FavoriteBlogRecipesSerializer(serializers.ModelSerializer):
             favorite = Favorite.objects.create(recipe=blog_recipe, user=user)
 
         return favorite
+
+
+
+    def to_representation(self, instance):
+        """Override to destructure the 'recipe' key"""
+        representation = super().to_representation(instance)
+        return representation.get('recipe', {})
