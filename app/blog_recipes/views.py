@@ -153,8 +153,8 @@ class FavoritesViewSet(
     """
     Manage favorites in the database
     """
-    authentication_classes = (TokenAuthentication,)
-    permission_classes = (IsAuthenticated,)
+    # authentication_classes = (TokenAuthentication,)
+    # permission_classes = (IsAuthenticated,)
 
     serializer_class = serializers.FavoriteBlogRecipesSerializer
     queryset = Favorite.objects.all()
