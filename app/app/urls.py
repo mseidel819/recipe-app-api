@@ -23,14 +23,14 @@ from django.conf.urls.static import static
 
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('api/schema/', SpectacularAPIView.as_view(),
+    path('v1/admin/', admin.site.urls),
+    path('v1/api/schema/', SpectacularAPIView.as_view(),
          name='schema'),  # yaml file
-    path('api/docs/', SpectacularSwaggerView.as_view(url_name='schema'),
+    path('v1/api/docs/', SpectacularSwaggerView.as_view(url_name='schema'),
          name='api-docs'),
-    path('api/user/', include('user.urls')),
-    path('api/recipe/', include('recipe.urls')),
-    path('api/blog-recipes/', include('blog_recipes.urls')),
+    path('v1/api/user/', include('user.urls')),
+    path('v1/api/recipe/', include('recipe.urls')),
+    path('v1/api/blog-recipes/', include('blog_recipes.urls')),
 ]
 
 if settings.DEBUG:
