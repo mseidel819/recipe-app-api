@@ -209,7 +209,6 @@ class FavoriteApiTests(TestCase):
             password="test123"
         )
         self.author = create_author()
-        # self.factory = RequestFactory()
         self.client.force_authenticate(self.user)
 
     def test_create_favorite(self):

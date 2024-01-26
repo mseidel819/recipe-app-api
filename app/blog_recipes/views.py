@@ -57,8 +57,6 @@ class AuthorViewSet(
     """
     Manage Authors in the database
     """
-    # authentication_classes = (TokenAuthentication,)
-    # permission_classes = (IsAuthenticated,)
     serializer_class = serializers.BlogAuthorSerializer
     queryset = BlogAuthor.objects.all()
 
@@ -93,8 +91,6 @@ class BlogRecipeByAuthorViewSet(
 
     filter_backends = [DjangoFilterBackend]
     filterset_class = RecipeFilter
-    # authentication_classes = (TokenAuthentication,)
-    # permission_classes = (IsAuthenticated,)
 
     def get_queryset(self, *args, **kwargs):
         """
@@ -150,8 +146,6 @@ class FavoritesViewSet(
     """
     Manage favorites in the database
     """
-    # authentication_classes = (TokenAuthentication,)
-    # permission_classes = (IsAuthenticated,)
 
     serializer_class = serializers.FavoriteBlogRecipesSerializer
     queryset = Favorite.objects.all()
@@ -175,13 +169,7 @@ class FavoritesViewSet(
         """
         serializer.save(user=self.request.user)
 
-    # def get_serializer_class(self):
-    #     """
-    #     Return appropriate serializer class
-    #     """
-    #     if self.action == "list":
-    #         return serializers.BlogRecipeSerializer
-    #     return self.serializer_class
+
 
     def list(self, request, *args, **kwargs):
         """

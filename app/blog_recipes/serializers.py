@@ -143,7 +143,7 @@ class BlogRecipeSerializer(serializers.ModelSerializer):
         return [category['name']
                 for category in ordered_categories.values()]
 
-    def get_main_image(self, obj):  # Add this method
+    def get_main_image(self, obj):
         """Return only the first image"""
         images = obj.images
         request = self.context.get('request')
