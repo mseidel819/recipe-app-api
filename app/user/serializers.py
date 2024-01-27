@@ -8,10 +8,12 @@ from django.contrib.auth import (
 )
 from django.utils.translation import gettext_lazy as _
 
-# from dj_rest_auth.registration.serializers import RegisterSerializer
-# from allauth.account.adapter import get_adapter
-# from allauth.account.utils import setup_user_email
+from dj_rest_auth.registration.serializers import RegisterSerializer
+from allauth.account.adapter import get_adapter
+from allauth.account.utils import setup_user_email
 from rest_framework import serializers
+
+from dj_rest_auth.registration.serializers import RegisterSerializer
 
 
 # class CustomRegisterSerializer(RegisterSerializer):
@@ -19,20 +21,25 @@ from rest_framework import serializers
 
 #     def custom_signup(self, request, user):
 #         # Customize the signup process if needed
-#         pass
+#         # pass
 
 #     def get_cleaned_data(self):
+
 #         data = super().get_cleaned_data()
 #         data['username'] = data['email']
 #         return data
 
-#     def save(self, request, user):
-#         adapter = get_adapter()
-#         user = adapter.save_user(request, user, self)
-#         self.custom_signup(request, user)
-#         setup_user_email(request, user, [])
+#     def save(self, *args, **kwargs):
+#         # adapter = get_adapter()
+#         # user = adapter.save_user(request, user, self)
+#         # self.custom_signup(request, user)
+#         # setup_user_email(request, user, [])
+#         user = super().save(*args, **kwargs)
+#         self.custom_signup(args[0], user)
 
 #         return user
+
+
 
 
 class UserSerializer(serializers.ModelSerializer):
