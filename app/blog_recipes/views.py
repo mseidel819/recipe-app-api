@@ -169,8 +169,6 @@ class FavoritesViewSet(
         """
         serializer.save(user=self.request.user)
 
-
-
     def list(self, request, *args, **kwargs):
         """
         return list of recipes by author,
