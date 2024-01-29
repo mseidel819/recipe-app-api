@@ -130,7 +130,7 @@ class BlogRecipeByAuthorViewSet(
 
         filtered_queryset = self.filter_queryset(queryset)
         paginated_queryset = self.paginate_queryset(
-            filtered_queryset.order_by("-rating")
+            filtered_queryset.order_by("-rating", "-id")
             )
 
         serializer = self.get_serializer(paginated_queryset, many=True)
