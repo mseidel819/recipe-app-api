@@ -117,7 +117,7 @@ class BlogRecipeApiTests(TestCase):
 
         res = self.client.get(
             reverse("blog-recipes:blogrecipe-list", args=[self.author.id]))
-        recipes = BlogRecipe.objects.all().order_by("id")
+        recipes = BlogRecipe.objects.all().order_by("-id")
         serializer = BlogRecipeSerializer(
             recipes, many=True, context={'request': request})
         self.assertEqual(res.status_code, status.HTTP_200_OK)
