@@ -1,8 +1,8 @@
 # recipe-app-api
 
-Link to live API docs [here](https://peppy-alpaca-9050d7.netlify.app/v1/api/docs/).
+Link to live API docs [here](https://junkfreerecipes.netlify.app/v1/api/docs/).
 
-This is a personal project that I needed to make because of how frustrated I get with recipe blogs. Currently, it is set up to extract all of the recipe info from a list of blogs and throw it into an API that I can access through another react app found at https://peppy-alpaca-9050d7.netlify.app/v1/api/docs/
+This is a personal project that I needed to make because of how frustrated I get with recipe blogs. Currently, it is set up to extract all of the recipe info from a list of blogs and throw it into an API that I can access through another react app found at https://junkfreerecipes.netlify.app/v1/api/docs/
 
 In order to add and view favorites, the user must log in. Authentication is done using JWT.
 
