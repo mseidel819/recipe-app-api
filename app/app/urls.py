@@ -31,6 +31,8 @@ urlpatterns = [
     path('v1/api/user/', include('user.urls')),
     path('v1/api/recipe/', include('recipe.urls')),
     path('v1/api/blog-recipes/', include('blog_recipes.urls')),
+    path('v1/api/password_reset/', include(
+        'django_rest_passwordreset.urls', namespace='password_reset')),
 ]
 
 if settings.DEBUG:

@@ -27,7 +27,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'changeme')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = bool(int(os.environ.get('DEBUG', 0)))
 
-ALLOWED_HOSTS = ['junkfreerecipes.netlify.app']
+ALLOWED_HOSTS = ['junkfreerecipes.netlify.app', 'localhost', "127.0.0.1"]
 CSRF_TRUSTED_ORIGINS = ['https://junkfreerecipes.netlify.app']
 
 ALLOWED_HOSTS.extend(
@@ -62,6 +62,8 @@ INSTALLED_APPS = [
     'user',
     'recipe',
     'blog_recipes',
+    'django_rest_passwordreset',
+    # 'user.apps.UserConfig'
 ]
 
 MIDDLEWARE = [
@@ -208,3 +210,27 @@ REST_AUTH = {
     "USE_JWT": True,
     "JWT_AUTH_HTTPONLY": False,
 }
+
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = os.environ.get('EMAIL_HOST')
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = os.environ.get('EMAIL_USER')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_PASSWORD')
+
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [BASE_DIR, 'templates/',],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+            ],
+        },
+    },
+]
