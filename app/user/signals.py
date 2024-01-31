@@ -16,8 +16,9 @@ def password_reset_token_created(
     context = {
         'user': reset_password_token.user,
         'email': reset_password_token.user.email,
-        'reset_password_url': "{}?token={}".format(
+        'reset_password_url': "{}?email={}&token={}".format(
             url,
+            reset_password_token.user.email,
             reset_password_token.key)
     }
     # url goes to frontend reset component. token is the key
