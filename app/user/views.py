@@ -13,6 +13,10 @@ from rest_framework.views import exception_handler
 
 from django.contrib.auth import update_session_auth_hash
 from user.serializers import ChangePasswordSerializer
+from dj_rest_auth.views import LoginView
+from django.http import QueryDict
+
+
 
 
 def custom_exception_handler(exc, context):
@@ -58,3 +62,19 @@ def change_password(request):
                 {'error': 'Incorrect old password.'},
                 status=status.HTTP_400_BAD_REQUEST)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+# class CustomLoginView(LoginView):
+#     def post(self, request, *args, **kwargs):
+#         # Convert the entered email to lowercase
+#         mutable_data = request.data.copy()
+#         mutable_data['username'] = mutable_data.get('username', '').lower()
+
+#         modified_request_data = QueryDict(mutable_data.urlencode(), mutable=True)
+
+#         request.data = modified_request_data
+
+#         # Call the parent class's post method
+#         response = super().post(request, *args, **kwargs)
+
+#         return response

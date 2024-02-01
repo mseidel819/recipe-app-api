@@ -13,29 +13,6 @@ from django.utils.translation import gettext_lazy as _
 # from allauth.account.utils import setup_user_email
 from rest_framework import serializers
 
-# class CustomRegisterSerializer(RegisterSerializer):
-#     email = serializers.EmailField(required=True)
-
-#     def custom_signup(self, request, user):
-#         # Customize the signup process if needed
-#         # pass
-
-#     def get_cleaned_data(self):
-
-#         data = super().get_cleaned_data()
-#         data['username'] = data['email']
-#         return data
-
-#     def save(self, *args, **kwargs):
-#         # adapter = get_adapter()
-#         # user = adapter.save_user(request, user, self)
-#         # self.custom_signup(request, user)
-#         # setup_user_email(request, user, [])
-#         user = super().save(*args, **kwargs)
-#         self.custom_signup(args[0], user)
-
-#         return user
-
 
 class UserSerializer(serializers.ModelSerializer):
     """

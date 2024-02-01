@@ -9,6 +9,7 @@ from dj_rest_auth.jwt_auth import get_refresh_view
 from dj_rest_auth.views import LoginView, LogoutView, UserDetailsView
 from user.views import CustomRegisterView, change_password
 
+
 app_name = "user"
 
 urlpatterns = [
