@@ -128,17 +128,18 @@ def set_instructions(
                 li_arr = []
                 for li in ul.select("li"):
                     if website_name == "Half Baked Harvest":
-                        # blog is fucked. no consitancy. nested spans SOMETIMES for no good reason
+                        # blog is fucked. no consitancy.
+                        # nested spans SOMETIMES for no good reason
                         # get only direct span children
-                        divs =  li.find('div', recursive=False)
+                        divs = li.find('div', recursive=False)
                         span_arr = divs.find_all('span', recursive=False)
 
                         # for buffalo chicken
                         if len(span_arr) == 0:
                             span_arr = li.find_all("span", recursive=False)
                             if len(span_arr) == 0:
-                                text= divs.get_text()
-                                if text== "":
+                                text = divs.get_text()
+                                if text == "":
                                     print("1- no text here", recipe)
                                 li_arr.append(text)
                         else:
