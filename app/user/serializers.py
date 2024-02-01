@@ -7,10 +7,6 @@ from django.contrib.auth import (
     authenticate
 )
 from django.utils.translation import gettext_lazy as _
-
-# from dj_rest_auth.registration.serializers import RegisterSerializer
-# from allauth.account.adapter import get_adapter
-# from allauth.account.utils import setup_user_email
 from rest_framework import serializers
 
 

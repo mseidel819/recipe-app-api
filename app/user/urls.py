@@ -17,7 +17,6 @@ urlpatterns = [
     # path('token/', views.CreateTokenView.as_view(), name="token"),
     # path('me/', views.ManageUserView.as_view(), name="me"),
     path("register/", CustomRegisterView.as_view(), name="rest_register"),
-    # path("register/", RegisterView.as_view(), name="rest_register"),
     path("login/", LoginView.as_view(), name="rest_login"),
     path("logout/", LogoutView.as_view(), name="rest_logout"),
     path("user/", UserDetailsView.as_view(), name="rest_user_details"),

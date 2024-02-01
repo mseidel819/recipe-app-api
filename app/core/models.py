@@ -37,9 +37,11 @@ class UserManager(BaseUserManager):
     """
     Custom user manager
     """
-    def get_by_natural_key(self, email): # required for django to use email as username and make case insensitive
-        return self.get(email__iexact=email)
 
+    def get_by_natural_key(self, email):
+        """required for django to use email as
+           username and make case insensitive"""
+        return self.get(email__iexact=email)
 
     def create_user(self, email, password=None, **extra_fields):
         """
